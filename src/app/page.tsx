@@ -1,101 +1,113 @@
-import Image from "next/image";
+'use client'
+
+import { WhatsappLogo, InstagramLogo } from "@phosphor-icons/react";
+import Link from "next/link";
+
 
 export default function Home() {
   return (
-    <div className="grid grid-rows-[20px_1fr_20px] items-center justify-items-center min-h-screen p-8 pb-20 gap-16 sm:p-20 font-[family-name:var(--font-geist-sans)]">
-      <main className="flex flex-col gap-8 row-start-2 items-center sm:items-start">
-        <Image
-          className="dark:invert"
-          src="https://nextjs.org/icons/next.svg"
-          alt="Next.js logo"
-          width={180}
-          height={38}
-          priority
-        />
-        <ol className="list-inside list-decimal text-sm text-center sm:text-left font-[family-name:var(--font-geist-mono)]">
-          <li className="mb-2">
-            Get started by editing{" "}
-            <code className="bg-black/[.05] dark:bg-white/[.06] px-1 py-0.5 rounded font-semibold">
-              src/app/page.tsx
-            </code>
-            .
-          </li>
-          <li>Save and see your changes instantly.</li>
-        </ol>
+    <>
+     <header className="bg-blue-900 text-blue-100 text-center p-8">
+        <h1 className="m-0 text-2xl">Instituto de Ensino Eduardo Meotte</h1>
+        <p className="m-0 text-sm">Excelência em Educação Musical</p>
+    </header>
 
-        <div className="flex gap-4 items-center flex-col sm:flex-row">
-          <a
-            className="rounded-full border border-solid border-transparent transition-colors flex items-center justify-center bg-foreground text-background gap-2 hover:bg-[#383838] dark:hover:bg-[#ccc] text-sm sm:text-base h-10 sm:h-12 px-4 sm:px-5"
-            href="https://vercel.com/new?utm_source=create-next-app&utm_medium=appdir-template-tw&utm_campaign=create-next-app"
-            target="_blank"
-            rel="noopener noreferrer"
-          >
-            <Image
-              className="dark:invert"
-              src="https://nextjs.org/icons/vercel.svg"
-              alt="Vercel logomark"
-              width={20}
-              height={20}
-            />
-            Deploy now
-          </a>
-          <a
-            className="rounded-full border border-solid border-black/[.08] dark:border-white/[.145] transition-colors flex items-center justify-center hover:bg-[#f2f2f2] dark:hover:bg-[#1a1a1a] hover:border-transparent text-sm sm:text-base h-10 sm:h-12 px-4 sm:px-5 sm:min-w-44"
-            href="https://nextjs.org/docs?utm_source=create-next-app&utm_medium=appdir-template-tw&utm_campaign=create-next-app"
-            target="_blank"
-            rel="noopener noreferrer"
-          >
-            Read our docs
-          </a>
+    <nav className="bg-blue-800 text-blue-900 text-center p-4" aria-label="Navegação principal">
+        <a className="text-blue-100 decoration-none hover:text-blue-500 p-1 m-0.5" href="#cursos">Cursos</a>
+        <a className="text-blue-100 decoration-none hover:text-blue-500 p-1 m-0.5" href="#sobre">Sobre</a>
+        <a className="text-blue-100 decoration-none hover:text-blue-500 p-1 m-0.5" href="#contato">Contato</a>
+    </nav>
+
+    <main>
+        <div className="m-2/3 max-m-screen m-auto overflow-hidden px-8 py-4">
+            <section id="intro" className="flex flex-col items-center justify-center flex-wrap text-center gap-4">
+                <h2 className="text-4xl font-bold text-blue-900">Bem-vindo à Excelência em Educação Musical</h2>
+                <p>Descubra seu potencial musical com instrutores experientes e instalações de ponta.</p>
+                <a href="#cursos" className="inline-block bg-[#ff9800] text-white p-4 m-2 decoration-none rounded-md transition hover:bg-orange-500 hover:translate-y-1">Explorar Cursos</a>
+            </section>
+
+            <section id="cursos" aria-labelledby="cursos-titulo">
+                <h2 id="cursos-titulo" className="text-3xl font-bold text-blue-900 border-b-2 border-[#ff9800] pb-2 mb-3">Nossos Cursos em Destaque</h2>
+                <div className="bg-blue-50 bg-opacity-50 p-4 shadow-md m-3 rounded-lg flex flex-col gap-2 cursor-pointer hover:translate-y-[-0.25rem] hover:bg-opacity-70 transition-all duration-300">
+                    <h3 className="text-xl font-bold text-black">Violão para Iniciantes</h3>
+                    <p className="text-black">Duração: 8 semanas | Nível: Iniciante | Instrutor: Prof. Eduardo Meotte</p>
+                    <p className="text-black">Aprenda os fundamentos do violão e comece a tocar suas músicas favoritas!</p>
+                </div>
+                <div className="bg-blue-50 bg-opacity-50 p-4 shadow-md m-3 rounded-lg flex flex-col gap-2 cursor-pointer hover:translate-y-[-0.25rem] hover:bg-opacity-70 transition-all duration-300">
+                    <h3 className="text-xl font-bold text-black">Piano Avançado</h3>
+                    <p className="text-black">Duração: 12 semanas | Nível: Avançado | Instrutor: Profa. Maria Silva</p>
+                    <p className="text-black">Aperfeiçoe suas habilidades e domine técnicas avançadas de piano.</p>
+                </div>
+            </section>
         </div>
-      </main>
-      <footer className="row-start-3 flex gap-6 flex-wrap items-center justify-center">
-        <a
-          className="flex items-center gap-2 hover:underline hover:underline-offset-4"
-          href="https://nextjs.org/learn?utm_source=create-next-app&utm_medium=appdir-template-tw&utm_campaign=create-next-app"
-          target="_blank"
-          rel="noopener noreferrer"
-        >
-          <Image
-            aria-hidden
-            src="https://nextjs.org/icons/file.svg"
-            alt="File icon"
-            width={16}
-            height={16}
-          />
-          Learn
-        </a>
-        <a
-          className="flex items-center gap-2 hover:underline hover:underline-offset-4"
-          href="https://vercel.com/templates?framework=next.js&utm_source=create-next-app&utm_medium=appdir-template-tw&utm_campaign=create-next-app"
-          target="_blank"
-          rel="noopener noreferrer"
-        >
-          <Image
-            aria-hidden
-            src="https://nextjs.org/icons/window.svg"
-            alt="Window icon"
-            width={16}
-            height={16}
-          />
-          Examples
-        </a>
-        <a
-          className="flex items-center gap-2 hover:underline hover:underline-offset-4"
-          href="https://nextjs.org?utm_source=create-next-app&utm_medium=appdir-template-tw&utm_campaign=create-next-app"
-          target="_blank"
-          rel="noopener noreferrer"
-        >
-          <Image
-            aria-hidden
-            src="https://nextjs.org/icons/globe.svg"
-            alt="Globe icon"
-            width={16}
-            height={16}
-          />
-          Go to nextjs.org →
-        </a>
-      </footer>
-    </div>
+
+        <section id="testimonials" aria-labelledby="testimonials-titulo" className="bg-blue-800 text-blue-100 px-10 w-full max-w-screen min-h-[50vh]  p-4 overflow-hidden">
+            <div className="m-2/3 max-m-screen m-auto overflow-hidden px-8 py-4">
+                <h2 id="testimonials-titulo" className="text-3xl font-bold text-blue-100 border-b-2 border-[#ff9800] pb-2 mb-3" >Depoimentos de Alunos</h2>
+                <blockquote className="border-l-2 flex flex-col justify-center border-[#ff9800] pl-4 font-light text-blue-50 m-10">
+                    <p className="text-blue-50">"O Instituto Eduardo Meotte transformou minha paixão pela música em uma carreira próspera. Os instrutores são incríveis!"</p>
+                    <footer className="bg-blue-900 text-blue-50 p-2 mt-8 rounded-md font-bold text-center" >- Ana L., Aluna de Violão</footer>
+                </blockquote>
+                <blockquote className="border-l-2 flex flex-col justify-center border-[#ff9800] pl-4 font-light text-blue-50 m-10">
+                    <p className="text-blue-50">"O Instituto Eduardo Meotte transformou minha paixão pela música em uma carreira próspera. Os instrutores são incríveis!"</p>
+                    <footer className="bg-blue-900 text-blue-50 p-2 mt-8 rounded-md font-bold text-center" >- Ana L., Aluna de Violão</footer>
+                </blockquote>
+
+            </div>
+
+            
+        </section>
+
+        <div className="m-2/3 max-m-screen m-auto overflow-hidden px-8 py-4">
+            <section id="sobre" aria-labelledby="sobre-titulo">
+                <h2 id="sobre-titulo" className="text-3xl font-bold text-blue-900 border-b-2 border-[#ff9800] pb-2 mb-3">Sobre Nós</h2>
+                <p className="m-3 text-black opacity-90">O Instituto de Ensino Eduardo Meotte é dedicado a nutrir talentos musicais há mais de 20 anos. Nossa missão é proporcionar educação musical de alta qualidade em um ambiente inspirador e colaborativo.</p>
+            </section>            
+        </div>
+    </main>
+
+    
+    <footer className="bg-blue-900 text-blue-100">
+      <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-12">
+        <div className="grid grid-cols-1 md:grid-cols-3 gap-8 justify-items-center"> 
+
+          <div className="space-y-4">
+            <h3 className="text-lg font-semibold">Outros links</h3>
+            <ul className="space-y-2">
+              <li><Link href="/admin" className="text-sm hover:text-white transition-colors">Administração</Link></li>
+            </ul>
+          </div>
+          <div className="space-y-4">
+            <h3 className="text-lg font-semibold">Contatos</h3>
+            <p className="text-sm">123 Tech Street, Silicon Valley, CA 94000</p>
+            <p className="text-sm">Email: info@example.com</p>
+            <p className="text-sm">Phone: (123) 456-7890</p>
+          </div>
+          <div className="space-y-4">
+            <h3 className="text-lg font-semibold">Redes Sociais</h3>
+            <div className="flex space-x-4">
+              <a href="#" className="text-blue-300 hover:text-white transition-colors">
+                <InstagramLogo size={32} />
+                <span className="sr-only">Instagram</span>
+              </a>
+              <a href="#" className="text-blue-300 hover:text-white transition-colors">
+                <WhatsappLogo size={32} />
+                <span className="sr-only">LinkedIn</span>
+              </a>
+            </div>
+          </div>
+        </div>
+        <div className="mt-8 pt-8 border-t border-blue-800 text-center">
+          <p className="text-sm text-blue-400">
+            &copy; {new Date().getFullYear()} Instituto de Ensino Eduardo Meotte. Todos os direitos reservados.
+          </p>
+          <p>
+            Desenvolvido por: <a href="https://portfolio-ogabrielfelipe.netlify.app/" target="_blank" className="text-blue-100">ogabrielfelipe</a>.
+          </p>
+        </div>
+      </div>
+    </footer> 
+
+    </>
   );
 }

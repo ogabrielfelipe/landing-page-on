@@ -1,0 +1,6 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 300 100">
+  <rect x="10" y="10" width="280" height="80" rx="20" ry="20" fill="#4a90e2" />
+  <text x="150" y="65" font-family="Arial, sans-serif" font-size="32" font-weight="bold" text-anchor="middle" fill="white">
+    LandingPage<tspan fill="#ffcc00">.on</tspan>
+  </text>
+</svg>
