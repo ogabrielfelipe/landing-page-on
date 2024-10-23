@@ -48,15 +48,16 @@ type PaginationCourses = {
 
 interface TableWithPaginationProps {
   contents: Array<Record<string, any>>;
-  paginationCourses: PaginationCourses;
+  paginationCourses?: PaginationCourses;
   headers: Array<Record<string, string>>;
-  setPaginationCourses: (paginationCourses: PaginationCourses) => void;
+  setPaginationCourses?: (paginationCourses: PaginationCourses) => void;
   handleDelete: (id: string) => void;
   handleEdit: (id: string) => void;
   isActions: boolean;
   starred: boolean;
   handleStarred?: (id: string) => void;
   isLoading: boolean;
+  isPagination?: boolean;
 }
 
 export default function TableWithPagination({
@@ -70,6 +71,7 @@ export default function TableWithPagination({
   starred,
   handleStarred,
   isActions,
+  isPagination = true,
 }: TableWithPaginationProps) {
   return (
     <div className="flex flex-col  m-5 border-gray-200 rounded-lg overflow-auto max-h-[calc(100vh-200px)]">
@@ -79,8 +81,8 @@ export default function TableWithPagination({
             {headers.map(({ key, value }) => (
               <TableHead key={key}>{value}</TableHead>
             ))}
-            <TableHead>Em destaque</TableHead>
-            <TableHead>Ações</TableHead>
+            {starred && <TableHead>Em destaque</TableHead>}
+            {isActions && <TableHead>Ações</TableHead>}
           </TableRow>
         </TableHeader>
         <TableBody>
@@ -170,81 +172,83 @@ export default function TableWithPagination({
         </TableBody>
       </Table>
 
-      <Pagination className="bg-gray-200/50 p-1">
-        <PaginationContent>
-          <PaginationItem>
-            <Select
-              value={paginationCourses.perPage.toString()}
-              onValueChange={(value) =>
-                setPaginationCourses({
-                  ...paginationCourses,
-                  perPage: parseInt(value),
-                  page:
-                    paginationCourses.totalPage >= parseInt(value)
-                      ? 1
-                      : paginationCourses.page,
-                })
-              }
-            >
-              <SelectTrigger className="col-span-3">
-                <SelectValue placeholder="Select a role" />
-              </SelectTrigger>
-              <SelectContent>
-                <SelectItem value="10">10</SelectItem>
-                <SelectItem value="20">20</SelectItem>
-                <SelectItem value="50">50</SelectItem>
-                <SelectItem value="100">100</SelectItem>
-              </SelectContent>
-            </Select>
-          </PaginationItem>
-
-          <PaginationItem>
-            <PaginationPrevious
-              href="#"
-              onClick={() => {
-                if (paginationCourses.page > 1) {
+      {isPagination && (
+        <Pagination className="bg-gray-200/50 p-1">
+          <PaginationContent>
+            <PaginationItem>
+              <Select
+                value={paginationCourses.perPage.toString()}
+                onValueChange={(value) =>
                   setPaginationCourses({
                     ...paginationCourses,
-                    page: paginationCourses.page - 1,
-                  });
+                    perPage: parseInt(value),
+                    page:
+                      paginationCourses.totalPage >= parseInt(value)
+                        ? 1
+                        : paginationCourses.page,
+                  })
                 }
-              }}
-            />
-          </PaginationItem>
+              >
+                <SelectTrigger className="col-span-3">
+                  <SelectValue placeholder="Select a role" />
+                </SelectTrigger>
+                <SelectContent>
+                  <SelectItem value="10">10</SelectItem>
+                  <SelectItem value="20">20</SelectItem>
+                  <SelectItem value="50">50</SelectItem>
+                  <SelectItem value="100">100</SelectItem>
+                </SelectContent>
+              </Select>
+            </PaginationItem>
 
-          {Array.from({ length: paginationCourses.totalPage }).map(
-            (_, index) => (
-              <PaginationItem key={index} className="cursor-pointer">
-                <PaginationLink
-                  onClick={() =>
+            <PaginationItem>
+              <PaginationPrevious
+                href="#"
+                onClick={() => {
+                  if (paginationCourses.page > 1) {
                     setPaginationCourses({
                       ...paginationCourses,
-                      page: index + 1,
-                    })
+                      page: paginationCourses.page - 1,
+                    });
                   }
-                  isActive={paginationCourses.page === index + 1}
-                >
-                  {index + 1}
-                </PaginationLink>
-              </PaginationItem>
-            )
-          )}
+                }}
+              />
+            </PaginationItem>
 
-          <PaginationItem>
-            <PaginationNext
-              href="#"
-              onClick={() => {
-                if (paginationCourses.page < paginationCourses.totalPage) {
-                  setPaginationCourses({
-                    ...paginationCourses,
-                    page: paginationCourses.page + 1,
-                  });
-                }
-              }}
-            />
-          </PaginationItem>
-        </PaginationContent>
-      </Pagination>
+            {Array.from({ length: paginationCourses.totalPage }).map(
+              (_, index) => (
+                <PaginationItem key={index} className="cursor-pointer">
+                  <PaginationLink
+                    onClick={() =>
+                      setPaginationCourses({
+                        ...paginationCourses,
+                        page: index + 1,
+                      })
+                    }
+                    isActive={paginationCourses.page === index + 1}
+                  >
+                    {index + 1}
+                  </PaginationLink>
+                </PaginationItem>
+              )
+            )}
+
+            <PaginationItem>
+              <PaginationNext
+                href="#"
+                onClick={() => {
+                  if (paginationCourses.page < paginationCourses.totalPage) {
+                    setPaginationCourses({
+                      ...paginationCourses,
+                      page: paginationCourses.page + 1,
+                    });
+                  }
+                }}
+              />
+            </PaginationItem>
+          </PaginationContent>
+        </Pagination>
+      )}
     </div>
   );
 }
