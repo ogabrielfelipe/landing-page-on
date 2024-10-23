@@ -10,22 +10,12 @@ import {
   TableHeader,
   TableRow,
 } from "@/components/ui/table";
-import {
-  DropdownMenu,
-  DropdownMenuContent,
-  DropdownMenuItem,
-  DropdownMenuLabel,
-  DropdownMenuSeparator,
-  DropdownMenuTrigger,
-} from "@/components/ui/dropdown-menu";
 import { Input } from "@/components/ui/input";
-import { Users, BarChart, Layers, Bell, User, LogOut } from "lucide-react";
+import { Users, BarChart, Layers } from "lucide-react";
 import SideBar from "./_components/sideBar";
-import { signOut, useSession } from "next-auth/react";
+import { useSession } from "next-auth/react";
 import Loading from "./_components/loading";
 import HeaderAdmin from "./_components/header";
-
-export const URLBase = "http://localhost:3000/api";
 
 export default function AdminDashboard() {
   const { status } = useSession({

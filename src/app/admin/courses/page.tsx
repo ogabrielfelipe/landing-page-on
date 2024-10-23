@@ -36,7 +36,7 @@ import { useSession } from "next-auth/react";
 import HeaderAdmin from "../_components/header";
 
 import { getCourses } from "@/http/courses/get-courses";
-import { URLBase } from "../page";
+import { URLBase } from "@/http/config";
 import { Star } from "@phosphor-icons/react";
 import { toast } from "@/hooks/use-toast";
 
@@ -49,6 +49,10 @@ import {
   DialogTitle,
   DialogTrigger,
 } from "@/components/ui/dialog";
+import { createCourse } from "@/http/courses/create-courses";
+import { editCourse } from "@/http/courses/edit-courses";
+import { starredCourse } from "@/http/courses/starred-courses";
+import { deleteCourse } from "@/http/courses/delete-courses";
 
 type Course = {
   id: string;
@@ -82,11 +86,20 @@ export default function CourseManagement() {
 
   const fetchCourses = async () => {
     const coursesFn = await getCourses({ page: 1 });
-    if (coursesFn) {
-      setCourses(coursesFn.data);
+
+    const { courses } = await coursesFn.json();
+
+    if (coursesFn.status === 200) {
+      setCourses(courses);
+      setIsLoading(false);
+      return;
+    } else {
+      toast({
+        title: "Erro ao buscar cursos",
+        description: "Ocorreu um erro ao buscar os cursos",
+      });
+      setIsLoading(false);
     }
-    setCourses(coursesFn.courses);
-    setIsLoading(false);
   };
 
   useEffect(() => {
@@ -114,10 +127,7 @@ export default function CourseManagement() {
     let response;
 
     if (newCourse.id) {
-      response = await fetch(`${URLBase}/courses/${newCourse.id}`, {
-        method: "PUT",
-        body: JSON.stringify(newCourse),
-      });
+      response = await editCourse(newCourse);
 
       if (response.status === 200) {
         toast({
@@ -126,10 +136,7 @@ export default function CourseManagement() {
         });
       }
     } else {
-      response = await fetch(`${URLBase}/courses`, {
-        method: "POST",
-        body: JSON.stringify(newCourse),
-      });
+      response = await createCourse(newCourse);
 
       if (response.status === 201) {
         toast({
@@ -168,9 +175,7 @@ export default function CourseManagement() {
   const handleDeleteCourse = async (id: string) => {
     setIsLoading(true);
 
-    const response = await fetch(`${URLBase}/courses/${id}`, {
-      method: "DELETE",
-    });
+    const response = await deleteCourse({ id });
 
     setDrawerOpen(false);
     if (response.status === 200) {
@@ -186,20 +191,32 @@ export default function CourseManagement() {
   };
 
   const handleStarCourse = async (id: string) => {
-    const response = await fetch(`${URLBase}/courses/${id}/starred`, {
-      method: "PATCH",
-    });
+    setIsLoading(true);
+    const response = await starredCourse({ id });
+
+    console.log(response);
 
     const courseSelected = courses.find((course) => course.id === id);
-
     if (response.status === 200) {
+      setIsLoading(false);
+
       toast({
         title: "Curso atualizado!",
         description: `O curso foi ${
           courseSelected?.starred ? "retirado o destaque" : "destacado"
         } com sucesso`,
       });
+    }else{
+      setIsLoading(false);
+      
+      toast({
+        title: "Ops!",
+        description: `Não foi possível ${
+          courseSelected?.starred ? "retirar o destaque" : "destacar"
+        } o curso.`,
+      });
     }
+
 
     await fetchCourses();
   };
@@ -207,7 +224,6 @@ export default function CourseManagement() {
   return (
     <div className="flex h-screen bg-gray-100">
       <SideBar />
-
       <div className="flex-1 flex flex-col overflow-hidden gap-4">
         <HeaderAdmin title="Cadastro de Cursos" />
 
@@ -427,6 +443,8 @@ export default function CourseManagement() {
           </TableBody>
         </Table>
       </div>
+
+      {isLoading && <Loading />}
     </div>
   );
 }

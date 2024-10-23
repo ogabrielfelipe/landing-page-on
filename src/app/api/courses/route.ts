@@ -1,17 +1,10 @@
 import { prisma } from "@/lib/prisma";
 import { NextResponse } from "next/server";
 import { z } from "zod";
-
-const courseSchema = z.object({
-  name: z.string(),
-  description: z.string(),
-  image: z.string(),
-  duration: z.number({ coerce: true }),
-  starred: z.boolean().optional().default(false),
-  instructor: z.string(),
-});
-
-type CreateCoursesRequest = z.infer<typeof courseSchema>;
+import {
+  courseSchema,
+  CreateCoursesRequest,
+} from "@/http/courses/create-courses";
 
 export async function POST(request: Request) {
   const body = await request.json();
