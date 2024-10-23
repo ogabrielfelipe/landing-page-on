@@ -46,6 +46,7 @@ import {
   DialogTitle,
   DialogTrigger,
 } from "@/components/ui/dialog";
+import FormDrawer from "../_components/formDrawer";
 
 type Course = {
   id: string;
@@ -236,10 +237,17 @@ export default function CourseManagement() {
     await fetchCourses();
   };
 
-  const handlePagination = async (page: number) => {
-    const pagination = { ...paginationCourses, page };
-
-    setPaginationCourses(pagination);
+  const handleClickNewCourse = () => {
+    setNewCourse({
+      id: "",
+      name: "",
+      description: "",
+      image: "",
+      duration: 0,
+      starred: false,
+      instructor: "",
+    });
+    setDrawerOpen(true);
   };
 
   return (
@@ -257,130 +265,123 @@ export default function CourseManagement() {
             <div className="relative">
               <Search className="absolute left-2 top-2.5 h-4 w-4 text-muted-foreground" />
               <Input
-                placeholder="Search courses..."
+                placeholder="Pesquise por nome, descrição ou instrutor..."
                 value={searchTerm}
                 onChange={(e) => setSearchTerm(e.target.value)}
                 className="pl-8 w-64"
               />
             </div>
-            <Drawer
-              open={drawerOpen}
-              direction="right"
-              onOpenChange={setDrawerOpen}
+
+            <Button onClick={handleClickNewCourse}>
+              <PlusCircle className="mr-2 h-4 w-4" />
+              Novo Curso
+            </Button>
+
+            <FormDrawer
+              drawerOpen={drawerOpen}
+              setDrawerOpen={setDrawerOpen}
+              description="Informe os dados do novo curso."
+              title="Adicionar Novo Curso"
             >
-              <DrawerTrigger asChild>
-                <Button>
-                  <PlusCircle className="mr-2 h-4 w-4" />
-                  Novo Curso
-                </Button>
-              </DrawerTrigger>
-              <DrawerContent className="min-h-screen w-[480px]">
-                <DrawerHeader>
-                  <DrawerTitle>Adicionar Novo Usuário</DrawerTitle>
-                  <DrawerDescription>
-                    Informe os dados de um novo usuário.
-                  </DrawerDescription>
-                </DrawerHeader>
-                <form onSubmit={handleAddCourse} className="px-4">
-                  <div className="grid gap-4 py-4">
-                    <div className="grid grid-cols-4 items-center gap-4">
-                      <Label htmlFor="name" className="text-right">
-                        Nome
-                      </Label>
-                      <Input
-                        id="name"
-                        value={newCourse.name}
-                        onChange={(e) =>
-                          setNewCourse({ ...newCourse, name: e.target.value })
-                        }
-                        className="col-span-3"
-                      />
-                    </div>
-                    <div className="grid grid-cols-4 items-center gap-4">
-                      <Label htmlFor="email" className="text-right">
-                        Descrição
-                      </Label>
-                      <Input
-                        id="description"
-                        type="text"
-                        value={newCourse.description}
-                        onChange={(e) =>
-                          setNewCourse({
-                            ...newCourse,
-                            description: e.target.value,
-                          })
-                        }
-                        className="col-span-3"
-                      />
-                    </div>
-                    <div className="grid grid-cols-4 items-center gap-4">
-                      <Label htmlFor="email" className="text-right">
-                        Tempo de curso (em meses):
-                      </Label>
-                      <Input
-                        id="duration"
-                        type="number"
-                        value={newCourse.duration}
-                        onChange={(e) =>
-                          setNewCourse({
-                            ...newCourse,
-                            duration: e.target.value,
-                          })
-                        }
-                        className="col-span-3"
-                      />
-                    </div>
-                    <div className="grid grid-cols-4 items-center gap-4">
-                      <Label htmlFor="role" className="text-right">
-                        Em Destaque:
-                      </Label>
-                      <Select
-                        value={newCourse.starred ? "1" : "0"}
-                        onValueChange={(value) =>
-                          setNewCourse({
-                            ...newCourse,
-                            starred: value === "1",
-                          })
-                        }
-                      >
-                        <SelectTrigger className="col-span-3">
-                          <SelectValue placeholder="Select a role" />
-                        </SelectTrigger>
-                        <SelectContent>
-                          <SelectItem value="1">Sim</SelectItem>
-                          <SelectItem value="0">Não</SelectItem>
-                        </SelectContent>
-                      </Select>
-                    </div>
-                    <div className="grid grid-cols-4 items-center gap-4">
-                      <Label htmlFor="email" className="text-right">
-                        Nome do Instrutor:
-                      </Label>
-                      <Input
-                        id="instructor"
-                        type="text"
-                        value={newCourse.instructor}
-                        onChange={(e) =>
-                          setNewCourse({
-                            ...newCourse,
-                            instructor: e.target.value,
-                          })
-                        }
-                        className="col-span-3"
-                      />
-                    </div>
+              <form onSubmit={handleAddCourse} className="px-4">
+                <div className="grid gap-4 py-4">
+                  <div className="grid grid-cols-4 items-center gap-4">
+                    <Label htmlFor="name" className="text-right">
+                      Nome
+                    </Label>
+                    <Input
+                      id="name"
+                      value={newCourse.name}
+                      onChange={(e) =>
+                        setNewCourse({ ...newCourse, name: e.target.value })
+                      }
+                      className="col-span-3"
+                    />
                   </div>
-                  <DrawerFooter>
-                    <Button type="submit" disabled={isLoading}>
-                      {isLoading ? "Salvando..." : "Salvar"}
-                    </Button>
-                    <DrawerClose asChild>
-                      <Button variant="outline">Cancelar</Button>
-                    </DrawerClose>
-                  </DrawerFooter>
-                </form>
-              </DrawerContent>
-            </Drawer>
+                  <div className="grid grid-cols-4 items-center gap-4">
+                    <Label htmlFor="email" className="text-right">
+                      Descrição
+                    </Label>
+                    <Input
+                      id="description"
+                      type="text"
+                      value={newCourse.description}
+                      onChange={(e) =>
+                        setNewCourse({
+                          ...newCourse,
+                          description: e.target.value,
+                        })
+                      }
+                      className="col-span-3"
+                    />
+                  </div>
+                  <div className="grid grid-cols-4 items-center gap-4">
+                    <Label htmlFor="email" className="text-right">
+                      Tempo de curso (em meses):
+                    </Label>
+                    <Input
+                      id="duration"
+                      type="number"
+                      value={newCourse.duration}
+                      onChange={(e) =>
+                        setNewCourse({
+                          ...newCourse,
+                          duration: parseInt(e.target.value),
+                        })
+                      }
+                      className="col-span-3"
+                    />
+                  </div>
+                  <div className="grid grid-cols-4 items-center gap-4">
+                    <Label htmlFor="role" className="text-right">
+                      Em Destaque:
+                    </Label>
+                    <Select
+                      value={newCourse.starred ? "1" : "0"}
+                      onValueChange={(value) =>
+                        setNewCourse({
+                          ...newCourse,
+                          starred: value === "1",
+                        })
+                      }
+                    >
+                      <SelectTrigger className="col-span-3">
+                        <SelectValue placeholder="Select a role" />
+                      </SelectTrigger>
+                      <SelectContent>
+                        <SelectItem value="1">Sim</SelectItem>
+                        <SelectItem value="0">Não</SelectItem>
+                      </SelectContent>
+                    </Select>
+                  </div>
+                  <div className="grid grid-cols-4 items-center gap-4">
+                    <Label htmlFor="email" className="text-right">
+                      Nome do Instrutor:
+                    </Label>
+                    <Input
+                      id="instructor"
+                      type="text"
+                      value={newCourse.instructor}
+                      onChange={(e) =>
+                        setNewCourse({
+                          ...newCourse,
+                          instructor: e.target.value,
+                        })
+                      }
+                      className="col-span-3"
+                    />
+                  </div>
+                </div>
+                <DrawerFooter>
+                  <Button type="submit" disabled={isLoading}>
+                    {isLoading ? "Salvando..." : "Salvar"}
+                  </Button>
+                  <DrawerClose asChild>
+                    <Button variant="outline">Cancelar</Button>
+                  </DrawerClose>
+                </DrawerFooter>
+              </form>
+            </FormDrawer>
           </div>
           <TableWithPagination
             contents={filteredCourses}
