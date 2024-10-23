@@ -5,14 +5,7 @@ import Head from "next/head";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
-import {
-  Table,
-  TableBody,
-  TableCell,
-  TableHead,
-  TableHeader,
-  TableRow,
-} from "@/components/ui/table";
+
 import {
   Drawer,
   DrawerClose,
@@ -37,9 +30,13 @@ import { useSession } from "next-auth/react";
 import HeaderAdmin from "../_components/header";
 
 import { getCourses } from "@/http/courses/get-courses";
-import { Star } from "@phosphor-icons/react";
 import { toast } from "@/hooks/use-toast";
 
+import { createCourse } from "@/http/courses/create-courses";
+import { editCourse } from "@/http/courses/edit-courses";
+import { starredCourse } from "@/http/courses/starred-courses";
+import { deleteCourse } from "@/http/courses/delete-courses";
+import TableWithPagination from "../_components/table-with-pagination";
 import {
   Dialog,
   DialogClose,
@@ -49,21 +46,6 @@ import {
   DialogTitle,
   DialogTrigger,
 } from "@/components/ui/dialog";
-
-import {
-  Pagination,
-  PaginationContent,
-  PaginationEllipsis,
-  PaginationItem,
-  PaginationLink,
-  PaginationNext,
-  PaginationPrevious,
-} from "@/components/ui/pagination";
-
-import { createCourse } from "@/http/courses/create-courses";
-import { editCourse } from "@/http/courses/edit-courses";
-import { starredCourse } from "@/http/courses/starred-courses";
-import { deleteCourse } from "@/http/courses/delete-courses";
 
 type Course = {
   id: string;
@@ -400,164 +382,22 @@ export default function CourseManagement() {
               </DrawerContent>
             </Drawer>
           </div>
-
-          <div className="flex flex-col gap-4 overflow-auto max-h-[calc(100vh-200px)]">
-            <Table>
-              <TableHeader>
-                <TableRow>
-                  <TableHead>Nome</TableHead>
-                  <TableHead>Descrição</TableHead>
-                  <TableHead>Instrutor</TableHead>
-                  <TableHead>Em Destaque</TableHead>
-                  <TableHead>Ações</TableHead>
-                </TableRow>
-              </TableHeader>
-              <TableBody>
-                {filteredCourses.map((course) => (
-                  <TableRow key={course.id}>
-                    <TableCell>{course.name}</TableCell>
-                    <TableCell>{course.description}</TableCell>
-                    <TableCell className="text-center">
-                      {course.instructor}
-                    </TableCell>
-                    <TableCell>
-                      {course.starred ? (
-                        <Star
-                          size={26}
-                          color="#a0a21a"
-                          className="cursor-pointer"
-                          weight="fill"
-                          onClick={() => handleStarCourse(course.id)}
-                        />
-                      ) : (
-                        <Star
-                          size={26}
-                          className="cursor-pointer"
-                          onClick={() => handleStarCourse(course.id)}
-                        />
-                      )}
-                    </TableCell>
-                    <TableCell>
-                      <Button
-                        variant="ghost"
-                        size="sm"
-                        onClick={() => selectCourseForEdit(course.id)}
-                      >
-                        Edit
-                      </Button>
-                      <Dialog>
-                        <DialogTrigger>
-                          <Button
-                            variant="ghost"
-                            size="sm"
-                            className="text-red-600"
-                          >
-                            Delete
-                          </Button>
-                        </DialogTrigger>
-                        <DialogContent>
-                          <DialogHeader>
-                            <DialogTitle>
-                              Tem certeza que deseja deletar este curso?
-                            </DialogTitle>
-                            <DialogDescription>
-                              <p>
-                                Ao Clicar em Sim, o curso com o título "
-                                {course.name}" será deletado permanentemente.
-                              </p>
-                              <div className="flex gap-4 justify-center">
-                                <DialogClose>
-                                  <Button
-                                    variant="outline"
-                                    disabled={isLoading}
-                                    onClick={() =>
-                                      handleDeleteCourse(course.id)
-                                    }
-                                  >
-                                    {isLoading ? "Deletando..." : "Sim"}
-                                  </Button>
-                                </DialogClose>
-                                <DialogClose>
-                                  <Button variant="destructive">Não</Button>
-                                </DialogClose>
-                              </div>
-                            </DialogDescription>
-                          </DialogHeader>
-                        </DialogContent>
-                      </Dialog>
-                    </TableCell>
-                  </TableRow>
-                ))}
-              </TableBody>
-            </Table>
-
-            <Pagination>
-              <PaginationContent>
-                <PaginationItem>
-                  <Select
-                    value={paginationCourses.perPage.toString()}
-                    onValueChange={(value) =>
-                      setPaginationCourses({
-                        ...paginationCourses,
-                        perPage: parseInt(value),
-                        page:
-                          paginationCourses.totalPage >= parseInt(value)
-                            ? 1
-                            : paginationCourses.page,
-                      })
-                    }
-                  >
-                    <SelectTrigger className="col-span-3">
-                      <SelectValue placeholder="Select a role" />
-                    </SelectTrigger>
-                    <SelectContent>
-                      <SelectItem value="10">10</SelectItem>
-                      <SelectItem value="20">20</SelectItem>
-                      <SelectItem value="50">50</SelectItem>
-                      <SelectItem value="100">100</SelectItem>
-                    </SelectContent>
-                  </Select>
-                </PaginationItem>
-
-                <PaginationItem>
-                  <PaginationPrevious
-                    href="#"
-                    onClick={() => {
-                      if (paginationCourses.page > 1) {
-                        handlePagination(paginationCourses.page - 1);
-                      }
-                    }}
-                  />
-                </PaginationItem>
-
-                {Array.from({ length: paginationCourses.totalPage }).map(
-                  (_, index) => (
-                    <PaginationItem key={index} className="cursor-pointer">
-                      <PaginationLink
-                        onClick={() => handlePagination(index + 1)}
-                        isActive={paginationCourses.page === index + 1}
-                      >
-                        {index + 1}
-                      </PaginationLink>
-                    </PaginationItem>
-                  )
-                )}
-
-                <PaginationItem>
-                  <PaginationNext
-                    href="#"
-                    onClick={() => {
-                      if (
-                        paginationCourses.page < paginationCourses.totalPage
-                      ) {
-                        handlePagination(paginationCourses.page + 1);
-                      }
-                    }}
-                  />
-                </PaginationItem>
-              </PaginationContent>
-            </Pagination>
-          </div>
+          <TableWithPagination
+            contents={filteredCourses}
+            headers={[
+              { key: "name", value: "Nome" },
+              { key: "description", value: "Descrição" },
+              { key: "instructor", value: "Instrutor" },
+            ]}
+            handleDelete={handleDeleteCourse}
+            handleEdit={selectCourseForEdit}
+            isLoading={isLoading}
+            paginationCourses={paginationCourses}
+            setPaginationCourses={setPaginationCourses}
+            isActions={true}
+            starred={true}
+            handleStarred={handleStarCourse}
+          />
         </div>
       </div>
 
