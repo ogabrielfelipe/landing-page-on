@@ -1,10 +1,13 @@
 import { prisma } from "@/lib/prisma";
 import { NextResponse } from "next/server";
-import { z } from "zod";
 import {
   courseSchema,
   CreateCoursesRequest,
 } from "@/http/courses/create-courses";
+import {
+  GetCoursesRequest,
+  getCoursesSchema,
+} from "@/http/courses/get-courses";
 
 export async function POST(request: Request) {
   const body = await request.json();
@@ -38,17 +41,6 @@ export async function POST(request: Request) {
   }
 }
 
-const getCoursesSchema = z.object({
-  page: z.number({ coerce: true }).optional().default(1),
-  id: z.string().optional(),
-  name: z.string().optional(),
-  description: z.string().optional(),
-  starred: z.boolean().optional(),
-  instructor: z.string().optional(),
-});
-
-type GetCoursesRequest = z.infer<typeof getCoursesSchema>;
-
 export async function GET(request: Request) {
   const { searchParams } = new URL(request.url);
   const query = getCoursesSchema.safeParse(Object.fromEntries(searchParams));
@@ -61,7 +53,7 @@ export async function GET(request: Request) {
   }
 
   const courses = await getCourses(query.data);
-  return NextResponse.json({ courses }, { status: 200 });
+  return NextResponse.json({ ...courses }, { status: 200 });
 }
 
 async function createCourses(data: CreateCoursesRequest) {
@@ -72,7 +64,10 @@ async function createCourses(data: CreateCoursesRequest) {
 }
 
 async function getCourses(props: GetCoursesRequest) {
-  const { page = 1, ...search } = props;
+  console.log(props);
+
+  const { page, perPage, ...search } = props;
+
   const courses = await prisma.course.findMany({
     where: {
       ...(search?.id && { id: search.id }),
@@ -88,8 +83,24 @@ async function getCourses(props: GetCoursesRequest) {
     orderBy: {
       createdAt: "desc",
     },
-    take: 10,
-    skip: (page - 1) * 10,
+    take: perPage,
+    skip: (page - 1) * perPage,
   });
-  return courses;
+
+  const countCourses = await prisma.course.count({
+    where: {
+      ...(search?.id && { id: search.id }),
+    },
+    orderBy: {
+      createdAt: "desc",
+    },
+  });
+
+  return {
+    courses,
+    page,
+    perPage,
+    totalPage: Math.ceil(countCourses / perPage),
+    total: countCourses,
+  };
 }

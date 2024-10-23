@@ -3,14 +3,12 @@ import { z } from "zod";
 
 export const getCoursesSchema = z.object({
   page: z.number({ coerce: true }).optional().default(1),
-  search: z
-    .object({
-      name: z.string(),
-      description: z.string(),
-      starred: z.boolean().optional().default(false),
-      instructor: z.string(),
-    })
-    .optional(),
+  perPage: z.number({ coerce: true }).optional().default(10),
+  id: z.string().optional(),
+  name: z.string().optional(),
+  description: z.string().optional(),
+  starred: z.boolean().optional(),
+  instructor: z.string().optional(),
 });
 
 export type GetCoursesRequest = z.infer<typeof getCoursesSchema>;
