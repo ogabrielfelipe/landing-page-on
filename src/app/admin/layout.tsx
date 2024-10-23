@@ -1,6 +1,7 @@
 import type { Metadata } from "next";
 import localFont from "next/font/local";
 import "./adminStyles.css";
+import { NextAuthProvider } from "./NextAuthProvider";
 
 const geistSans = localFont({
   src: "../fonts/GeistVF.woff",
@@ -12,8 +13,6 @@ const geistMono = localFont({
   variable: "--font-geist-mono",
   weight: "100 900",
 });
-
-
 
 export const metadata: Metadata = {
   title: "Create Next App",
@@ -34,12 +33,20 @@ export default function AdminLayout({
       <body
         className={`${geistSans.variable} ${geistMono.variable} antialiased`}
       >
-        {children}
+        <NextAuthProvider>{children}</NextAuthProvider>
 
         <footer className="fixed bottom-0 w-full bg-blue-900 text-blue-100">
           <div className="border-blue-800 text-center flex justify-center">
             <p className="text-sm text-blue-400 p-1">
-              © {new Date().getFullYear()} <a href="https://portfolio-ogabrielfelipe.netlify.app/" target="_blank" className="text-blue-100">ogabrielfelipe</a>. All rights reserved.
+              © {new Date().getFullYear()}{" "}
+              <a
+                href="https://portfolio-ogabrielfelipe.netlify.app/"
+                target="_blank"
+                className="text-blue-100"
+              >
+                ogabrielfelipe
+              </a>
+              . All rights reserved.
             </p>
           </div>
         </footer>

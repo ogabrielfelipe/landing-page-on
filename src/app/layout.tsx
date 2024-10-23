@@ -1,6 +1,7 @@
 import type { Metadata } from "next";
 import localFont from "next/font/local";
 import "./globals.css";
+import { Toaster } from "@/components/ui/toaster";
 
 const geistSans = localFont({
   src: "./fonts/GeistVF.woff",
@@ -15,12 +16,14 @@ const geistMono = localFont({
 
 export const metadata: Metadata = {
   title: "Instituto de Ensino Eduardo Meotte",
-  description: "escubra seu potencial musical no Instituto de Ensino Eduardo Meotte. Oferecemos cursos de violão, piano, e produção musical com instrutores experientes.",
+  description:
+    "escubra seu potencial musical no Instituto de Ensino Eduardo Meotte. Oferecemos cursos de violão, piano, e produção musical com instrutores experientes.",
   keywords: "violão, piano, produção musical, ensino de música, Eduardo Meotte",
   openGraph: {
     type: "website",
     title: "Instituto de Ensino Eduardo Meotte",
-    description: "escubra seu potencial musical no Instituto de Ensino Eduardo Meotte. Oferecemos cursos de violão, piano, e produção musical com instrutores experientes.",
+    description:
+      "escubra seu potencial musical no Instituto de Ensino Eduardo Meotte. Oferecemos cursos de violão, piano, e produção musical com instrutores experientes.",
     images: [
       {
         url: "https://www.institutoemeotte.com/logo.png",
@@ -35,7 +38,6 @@ export const metadata: Metadata = {
       url: "https://portfolio-ogabrielfelipe.netlify.app/",
     },
   ],
-
 };
 
 export default function RootLayout({
@@ -49,8 +51,7 @@ export default function RootLayout({
         className={`${geistSans.variable} ${geistMono.variable} antialiased min-h-screen`}
       >
         {children}
-
-        
+        <Toaster />
       </body>
     </html>
   );
