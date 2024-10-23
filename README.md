@@ -1,36 +1,31 @@
-This is a [Next.js](https://nextjs.org) project bootstrapped with [`create-next-app`](https://nextjs.org/docs/app/api-reference/cli/create-next-app).
+# LandingPage.on
+
+## Overview
+
+This project is a dynamic landing page system with an integrated administrative area. It allows users to easily customize and manage their landing page content, similar to a blog management system. The system is built using modern web technologies and provides a user-friendly interface for both visitors and administrators.
+
+## Features
+
+- **Dynamic Landing Page**: A customizable front-end that showcases your content to visitors.
+- **Administrative Dashboard**: A secure area for authorized users to manage content.
+- **Course Management**: Add, edit, delete, and highlight courses (as seen in the provided code).
+- **User Authentication**: Secure login system for administrative access.
+- **Responsive Design**: Ensures a great experience across various devices and screen sizes.
+- **Search Functionality**: Easily find specific content within the admin area.
+- **Pagination**: Efficiently navigate through large sets of data.
+
+## Technology Stack
+
+- **Frontend**: React with Next.js for server-side rendering and routing
+- **UI Components**: Custom UI components (likely using a library like Radix UI or Shadcn UI)
+- **Authentication**: NextAuth.js for handling user sessions
+- **API**: RESTful API endpoints for data management
+- **Styling**: Tailwind CSS for responsive and customizable designs
 
 ## Getting Started
 
-First, run the development server:
-
-```bash
-npm run dev
-# or
-yarn dev
-# or
-pnpm dev
-# or
-bun dev
-```
-
-Open [http://localhost:3000](http://localhost:3000) with your browser to see the result.
-
-You can start editing the page by modifying `app/page.tsx`. The page auto-updates as you edit the file.
-
-This project uses [`next/font`](https://nextjs.org/docs/app/building-your-application/optimizing/fonts) to automatically optimize and load [Geist](https://vercel.com/font), a new font family for Vercel.
-
-## Learn More
-
-To learn more about Next.js, take a look at the following resources:
-
-- [Next.js Documentation](https://nextjs.org/docs) - learn about Next.js features and API.
-- [Learn Next.js](https://nextjs.org/learn) - an interactive Next.js tutorial.
-
-You can check out [the Next.js GitHub repository](https://github.com/vercel/next.js) - your feedback and contributions are welcome!
-
-## Deploy on Vercel
-
-The easiest way to deploy your Next.js app is to use the [Vercel Platform](https://vercel.com/new?utm_medium=default-template&filter=next.js&utm_source=create-next-app&utm_campaign=create-next-app-readme) from the creators of Next.js.
-
-Check out our [Next.js deployment documentation](https://nextjs.org/docs/app/building-your-application/deploying) for more details.
+1. Clone the repository
+2. Install dependencies: `npm install`
+3. Set up environment variables (details in `.env.example`)
+4. Run the development server: `npm run dev`
+5. Open `http://localhost:3000` in your browser
