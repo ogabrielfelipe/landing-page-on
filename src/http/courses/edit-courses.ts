@@ -6,6 +6,7 @@ export const courseEditSchema = z.object({
   name: z.string(),
   description: z.string(),
   image: z.string(),
+  level: z.enum(["INITIAL", "INTERMEDIARY", "ADVANCED"]),
   duration: z.number({ coerce: true }),
   starred: z.boolean().optional().default(false),
   instructor: z.string(),

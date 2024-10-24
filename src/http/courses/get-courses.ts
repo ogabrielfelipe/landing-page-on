@@ -6,6 +6,7 @@ export const getCoursesSchema = z.object({
   perPage: z.number({ coerce: true }).optional().default(10),
   id: z.string().optional(),
   name: z.string().optional(),
+  level: z.enum(["INITIAL", "INTERMEDIARY", "ADVANCED"]).optional(),
   description: z.string().optional(),
   starred: z.boolean().optional(),
   instructor: z.string().optional(),

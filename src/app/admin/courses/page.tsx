@@ -53,6 +53,7 @@ type Course = {
   name: string;
   description: string;
   image: string;
+  level: string;
   duration: number;
   starred: boolean;
   instructor: string;
@@ -87,6 +88,7 @@ export default function CourseManagement() {
     description: "",
     image: "",
     duration: 0,
+    level: "INITIAL",
     starred: false,
     instructor: "",
   });
@@ -243,6 +245,7 @@ export default function CourseManagement() {
       name: "",
       description: "",
       image: "",
+      level: "INITIAL",
       duration: 0,
       starred: false,
       instructor: "",
@@ -351,6 +354,31 @@ export default function CourseManagement() {
                       <SelectContent>
                         <SelectItem value="1">Sim</SelectItem>
                         <SelectItem value="0">Não</SelectItem>
+                      </SelectContent>
+                    </Select>
+                  </div>
+                  <div className="grid grid-cols-4 items-center gap-4">
+                    <Label htmlFor="role" className="text-right">
+                      Nível:
+                    </Label>
+                    <Select
+                      value={newCourse.level}
+                      onValueChange={(value) =>
+                        setNewCourse({
+                          ...newCourse,
+                          level: value,
+                        })
+                      }
+                    >
+                      <SelectTrigger className="col-span-3">
+                        <SelectValue placeholder="Select a role" />
+                      </SelectTrigger>
+                      <SelectContent>
+                        <SelectItem value="INITIAL">Iniciante</SelectItem>
+                        <SelectItem value="INTERMEDIARY">
+                          Intermediário
+                        </SelectItem>
+                        <SelectItem value="ADVANCED">Avançado</SelectItem>
                       </SelectContent>
                     </Select>
                   </div>

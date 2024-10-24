@@ -18,6 +18,14 @@ model User {
   name     String
   email    String @unique
   password String
+
+  @@map("users")
+}
+
+enum LevelCourse {
+  INITIAL
+  INTERMEDIARY
+  ADVANCED
 }
 
 model Course {
@@ -25,17 +33,36 @@ model Course {
   name        String
   description String
   image       String
-  duration    Int
+  duration    Int 
   instructor  String
+  level       LevelCourse @default(INITIAL)
   starred     Boolean  @default(false)
-  createdAt   DateTime @default(now())
+  createdAt   DateTime @default(now()) @map("created_at")
+
+  testimonials Testimonials[]
+
+  @@map("courses")
 }
 
 model Settings {
   id          String @id @default(uuid())
   title       String
   about       String
-  createdAt   DateTime @default(now())
+  createdAt   DateTime @default(now()) @map("created_at")
+
+  @@map("settings")
 }
 
+model Testimonials{
+  id          String @id @default(uuid())
+  student String
+  description String
 
+  courseId String @map("course_id")
+  course Course @relation(fields: [courseId], references: [id])
+
+  createdAt DateTime @default(now()) @map("created_at")
+
+  @@map("testimonials")
+
+}
