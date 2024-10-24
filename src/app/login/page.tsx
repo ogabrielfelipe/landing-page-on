@@ -22,6 +22,7 @@ export default function Login() {
   const [showPassword, setShowPassword] = useState(false);
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
+  const [isLoading, setIsLoading] = useState(false);
 
   const { toast } = useToast();
   const router = useRouter();
@@ -30,6 +31,7 @@ export default function Login() {
 
   async function handleSubmit(e: React.FormEvent<HTMLFormElement>) {
     e.preventDefault();
+    setIsLoading(true);
 
     const res = await signIn("credentials", {
       email: email,
@@ -40,11 +42,16 @@ export default function Login() {
     let success = false;
 
     try {
-      await signIn("credentials", {
+      const resp = await signIn("credentials", {
         email: email,
         password: password,
         redirect: false,
       });
+
+      if (resp?.ok) {
+        setIsLoading(false);
+      }
+
       success = true;
     } catch (error) {
       console.error("Failed", error);
@@ -54,9 +61,11 @@ export default function Login() {
         variant: "destructive",
       });
       success = false;
+      setIsLoading(false);
     } finally {
       if (success) {
         router.push("/admin");
+        setIsLoading(false);
       }
     }
 
@@ -116,8 +125,20 @@ export default function Login() {
             <Button
               type="submit"
               className="w-full bg-blue-600 hover:bg-blue-700 text-white"
+              disabled={isLoading}
             >
-              Entrar
+              {isLoading ? (
+                <>
+                  <Image
+                    src={"/loading-spinner.svg"}
+                    alt="loading"
+                    width={20}
+                    height={20}
+                  />
+                </>
+              ) : (
+                <>Entrar</>
+              )}
             </Button>
           </form>
         </CardContent>
