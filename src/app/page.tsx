@@ -7,6 +7,7 @@ import { fetchStarredCourses } from "@/actions/fetch-courses-starred";
 import Loading from "./admin/_components/loading";
 import Header from "@/components/header";
 import Footer from "@/components/footer";
+import Card from "@/components/card";
 
 type Course = {
   id: string;
@@ -69,33 +70,7 @@ export default function Home() {
             </h2>
 
             {courses ? (
-              <>
-                {courses?.map((course) => {
-                  return (
-                    <>
-                      <div className="bg-blue-50 bg-opacity-50 p-4 shadow-md m-3 rounded-lg flex flex-col gap-2 cursor-pointer hover:translate-y-[-0.25rem] hover:bg-opacity-70 transition-all duration-300">
-                        <h3 className="text-xl font-bold text-black">
-                          {course.name}
-                        </h3>
-                        <p className="text-black">
-                          Duração: {course.duration} meses | Nível:{" "}
-                          {course.level == "INITIAL" ? (
-                            <>Iniciante</>
-                          ) : course.level == "INTERMEDIARY" ? (
-                            <>Intermediário</>
-                          ) : course.level == "ADVANCED" ? (
-                            <>Avançado</>
-                          ) : (
-                            <></>
-                          )}{" "}
-                          | Instrutor: Prof. {course.instructor}
-                        </p>
-                        <p className="text-black">{course.description}</p>
-                      </div>
-                    </>
-                  );
-                })}
-              </>
+              <Card contents={courses} />
             ) : (
               <div className="text-center m-10">
                 <h1 className="text-lg font-bold text-black">

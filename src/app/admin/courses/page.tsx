@@ -2,20 +2,13 @@
 
 import { useCallback, useEffect, useState } from "react";
 import Head from "next/head";
+
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
 
-import {
-  Drawer,
-  DrawerClose,
-  DrawerContent,
-  DrawerDescription,
-  DrawerFooter,
-  DrawerHeader,
-  DrawerTitle,
-  DrawerTrigger,
-} from "@/components/ui/drawer";
+import { DrawerClose, DrawerFooter } from "@/components/ui/drawer";
+
 import {
   Select,
   SelectContent,
@@ -37,16 +30,8 @@ import { editCourse } from "@/http/courses/edit-courses";
 import { starredCourse } from "@/http/courses/starred-courses";
 import { deleteCourse } from "@/http/courses/delete-courses";
 import TableWithPagination from "../_components/table-with-pagination";
-import {
-  Dialog,
-  DialogClose,
-  DialogContent,
-  DialogDescription,
-  DialogHeader,
-  DialogTitle,
-  DialogTrigger,
-} from "@/components/ui/dialog";
 import FormDrawer from "../_components/formDrawer";
+import WYSIWYGEditor from "../_components/wysiwyg-editor";
 
 type Course = {
   id: string;
@@ -301,24 +286,24 @@ export default function CourseManagement() {
                       className="col-span-3"
                     />
                   </div>
-                  <div className="grid grid-cols-4 items-center gap-4">
+                  <div className="grid grid-cols-4 mb-3 items-center gap-4">
                     <Label htmlFor="email" className="text-right">
                       Descrição
                     </Label>
-                    <Input
-                      id="description"
-                      type="text"
-                      value={newCourse.description}
-                      onChange={(e) =>
-                        setNewCourse({
-                          ...newCourse,
-                          description: e.target.value,
-                        })
-                      }
-                      className="col-span-3"
-                    />
+                    <div className="flex w-full min-h-52 col-span-3">
+                      <WYSIWYGEditor
+                        content={newCourse.description}
+                        handleEditorContent={(text) =>
+                          setNewCourse({
+                            ...newCourse,
+                            description: text,
+                          })
+                        }
+                      />
+                    </div>
                   </div>
-                  <div className="grid grid-cols-4 items-center gap-4">
+
+                  <div className="grid grid-cols-4 mt-8 items-center gap-4">
                     <Label htmlFor="email" className="text-right">
                       Tempo de curso (em meses):
                     </Label>

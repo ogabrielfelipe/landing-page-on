@@ -1,13 +1,10 @@
-import { Button } from "@/components/ui/button";
 import {
   Drawer,
   DrawerContent,
   DrawerDescription,
   DrawerHeader,
   DrawerTitle,
-  DrawerTrigger,
 } from "@/components/ui/drawer";
-import { PlusCircle } from "lucide-react";
 
 interface FormDrawerProps {
   drawerOpen: boolean;
@@ -27,7 +24,7 @@ export default function FormDrawer({
 }: FormDrawerProps) {
   return (
     <Drawer open={drawerOpen} direction="right" onOpenChange={setDrawerOpen}>
-      <DrawerContent className="min-h-screen w-[480px]">
+      <DrawerContent className="h-screen w-[580px] overflow-y-auto overflow-x-hidden">
         <DrawerHeader>
           <DrawerTitle>{title}</DrawerTitle>
           <DrawerDescription>{description}</DrawerDescription>
