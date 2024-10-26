@@ -29,19 +29,39 @@ enum LevelCourse {
 }
 
 model Course {
-  id          String @id @default(uuid())
-  name        String
-  description String
-  image       String
-  duration    Int 
-  instructor  String
-  level       LevelCourse @default(INITIAL)
-  starred     Boolean  @default(false)
-  createdAt   DateTime @default(now()) @map("created_at")
+  id            String @id @default(uuid())
+  name          String
+  shortDescription String 
+  description   String @db.VarChar(2048)
+  image         String
+  duration      Int 
+  instructor    String
+  level         LevelCourse @default(INITIAL)
+  starred       Boolean  @default(false)
+  categoryId    String @map("category_id")
+  testimonials  Testimonials[]
+  createdAt     DateTime @default(now()) @map("created_at")
 
-  testimonials Testimonials[]
+  catergory Category @relation(fields: [categoryId], references: [id])
 
   @@map("courses")
+}
+
+model Company{
+  id          String @id @default(uuid())
+  name String 
+  document String @unique @db.VarChar(14)
+  about String @db.VarChar(2048)
+
+  street String
+  number String
+  neighborhood String
+  city String
+  state String 
+  zipCode String @map("zip_code")
+
+
+  @@map("company")
 }
 
 model Settings {
@@ -55,14 +75,25 @@ model Settings {
 
 model Testimonials{
   id          String @id @default(uuid())
-  student String
+  student     String
   description String
 
-  courseId String @map("course_id")
+  courseId    String @map("course_id")
+  createdAt   DateTime @default(now()) @map("created_at")
+
+
   course Course @relation(fields: [courseId], references: [id])
 
-  createdAt DateTime @default(now()) @map("created_at")
-
   @@map("testimonials")
+}
 
+model Category{
+  id          String @id @default(uuid())
+  name        String @unique
+  isActive    Boolean
+  createdAt   DateTime @default(now()) @map("created_at")
+
+  courses Course[]
+
+  @@map("category")
 }
