@@ -53,6 +53,8 @@ model Company{
   document String @unique @db.VarChar(14)
   about String @db.VarChar(2048)
 
+  contacts String @db.VarChar(512)
+
   street String
   number String
   neighborhood String
@@ -60,6 +62,8 @@ model Company{
   state String 
   zipCode String @map("zip_code")
 
+  latitude String
+  longetude String
 
   @@map("company")
 }

@@ -18,7 +18,7 @@ type Course = {
 };
 
 export default function Courses() {
-  const [courses, setCourses] = useState<Course[]>();
+  const [courses, setCourses] = useState<Array<Course> | null>();
   const [isLoading, setIsLoading] = useState<boolean>(true);
 
   const fetchCourse = async () => {

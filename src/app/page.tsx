@@ -20,11 +20,12 @@ type Course = {
 };
 
 export default function Home() {
-  const [courses, setCourses] = useState<Course[]>();
+  const [courses, setCourses] = useState<Array<Course> | null>();
   const [isLoading, setIsLoading] = useState<boolean>(true);
 
   const fetchCourses = async () => {
     const { courses } = await fetchStarredCourses();
+
     setCourses(courses);
   };
 

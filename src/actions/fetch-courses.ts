@@ -13,7 +13,7 @@ type Course = {
 };
 
 interface coursesFetch {
-  courses: Course[];
+  courses: Course[] | null;
 }
 
 export async function fetchCourses(): Promise<coursesFetch> {
@@ -29,6 +29,10 @@ export async function fetchCourses(): Promise<coursesFetch> {
       instructor: true,
     },
   });
+
+  if (courses.length === 0) {
+    return { courses: null };
+  }
 
   return { courses };
 }
