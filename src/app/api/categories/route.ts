@@ -58,8 +58,11 @@ export async function GET(request: Request) {
 }
 
 async function createCategories(data: CreateCategoriesRequest) {
-  const course = await prisma.course.create({
-    data,
+  const course = await prisma.category.create({
+    data: {
+      name: data.name,
+      isActive: true,
+    },
   });
   return course;
 }
@@ -67,7 +70,7 @@ async function createCategories(data: CreateCategoriesRequest) {
 async function getCategories(props: GetCategoriesRequest) {
   const { page, perPage, ...search } = props;
 
-  const categories = await prisma.course.findMany({
+  const categories = await prisma.category.findMany({
     where: {
       ...(search?.id && { id: search.id }),
       ...(search?.name && { name: { contains: search.name } }),
@@ -79,9 +82,10 @@ async function getCategories(props: GetCategoriesRequest) {
     skip: (page - 1) * perPage,
   });
 
-  const countCategories = await prisma.course.count({
+  const countCategories = await prisma.category.count({
     where: {
       ...(search?.id && { id: search.id }),
+      ...(search?.name && { name: { contains: search.name } }),
     },
     orderBy: {
       createdAt: "desc",

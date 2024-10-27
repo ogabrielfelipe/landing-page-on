@@ -72,6 +72,7 @@ async function getCompanies(props: GetCompaniesRequest) {
     where: {
       ...(search?.id && { id: search.id }),
       ...(search?.name && { name: { contains: search.name } }),
+      ...(search?.document && { name: { contains: search.document } }),
     },
     orderBy: {
       createdAt: "desc",
@@ -83,6 +84,8 @@ async function getCompanies(props: GetCompaniesRequest) {
   const countCompanies = await prisma.course.count({
     where: {
       ...(search?.id && { id: search.id }),
+      ...(search?.name && { name: { contains: search.name } }),
+      ...(search?.document && { name: { contains: search.document } }),
     },
     orderBy: {
       createdAt: "desc",
