@@ -32,13 +32,16 @@ import { deleteCourse } from "@/http/courses/delete-courses";
 import TableWithPagination from "../_components/table-with-pagination";
 import FormDrawer from "../_components/formDrawer";
 import WYSIWYGEditor from "../_components/wysiwyg-editor";
+import { getCategories } from "@/http/categories/get-categories";
 
 type Course = {
   id: string;
   name: string;
+  resume: string;
   description: string;
+  category: string;
   image: string;
-  level: string;
+  level: "INITIAL" | "INTERMEDIARY" | "ADVANCED";
   duration: number;
   starred: boolean;
   instructor: string;
@@ -49,6 +52,12 @@ type PaginationCourses = {
   perPage: number;
   totalPage: number;
   total: number;
+};
+
+type Category = {
+  id: string;
+  name: string;
+  isActive: boolean;
 };
 
 export default function CourseManagement() {
@@ -70,13 +79,16 @@ export default function CourseManagement() {
   const [newCourse, setNewCourse] = useState<Course>({
     id: "",
     name: "",
+    resume: "",
     description: "",
+    category: "",
     image: "",
     duration: 0,
     level: "INITIAL",
     starred: false,
     instructor: "",
   });
+  const [categories, setCategories] = useState<Category[] | null>(null);
   const [drawerOpen, setDrawerOpen] = useState(false);
   const [isLoading, setIsLoading] = useState(false);
 
@@ -110,9 +122,27 @@ export default function CourseManagement() {
     }
   }, [paginationCourses.page, paginationCourses.perPage]);
 
+  const fetchCategories = async () => {
+    const categoriesFn = await getCategories({
+      isActive: true,
+      page: 1,
+      perPage: 100,
+    });
+    const data = await categoriesFn.json();
+
+    console.log(data);
+
+    if (categoriesFn.status === 200) {
+      setCategories(data.categories);
+      return;
+    } else {
+      return;
+    }
+  };
+
   useEffect(() => {
     setIsLoading(true);
-    fetchCourses();
+    Promise.all([fetchCategories(), fetchCourses()]);
   }, [fetchCourses]);
 
   if (status === "loading") return <Loading />;
@@ -140,7 +170,17 @@ export default function CourseManagement() {
         });
       }
     } else {
-      response = await createCourse(newCourse);
+      response = await createCourse({
+        shortDescription: newCourse.resume,
+        categoryId: newCourse.category,
+        description: newCourse.description,
+        duration: newCourse.duration,
+        instructor: newCourse.instructor,
+        image: newCourse.image,
+        level: newCourse.level,
+        name: newCourse.name,
+        starred: newCourse.starred,
+      });
 
       if (response.status === 201) {
         toast({
@@ -158,8 +198,11 @@ export default function CourseManagement() {
     setNewCourse({
       id: "",
       name: "",
+      resume: "",
       description: "",
+      category: "",
       image: "",
+      level: "INITIAL",
       duration: 0,
       starred: false,
       instructor: "",
@@ -228,7 +271,9 @@ export default function CourseManagement() {
     setNewCourse({
       id: "",
       name: "",
+      resume: "",
       description: "",
+      category: "",
       image: "",
       level: "INITIAL",
       duration: 0,
@@ -275,7 +320,7 @@ export default function CourseManagement() {
                 <div className="grid gap-4 py-4">
                   <div className="grid grid-cols-4 items-center gap-4">
                     <Label htmlFor="name" className="text-right">
-                      Nome
+                      Nome:
                     </Label>
                     <Input
                       id="name"
@@ -286,11 +331,24 @@ export default function CourseManagement() {
                       className="col-span-3"
                     />
                   </div>
+                  <div className="grid grid-cols-4 items-center gap-4">
+                    <Label htmlFor="name" className="text-right">
+                      Resumo:
+                    </Label>
+                    <Input
+                      id="name"
+                      value={newCourse.resume}
+                      onChange={(e) =>
+                        setNewCourse({ ...newCourse, resume: e.target.value })
+                      }
+                      className="col-span-3"
+                    />
+                  </div>
                   <div className="grid grid-cols-4 mb-3 items-center gap-4">
                     <Label htmlFor="email" className="text-right">
-                      Descrição
+                      Descrição:
                     </Label>
-                    <div className="flex w-full min-h-52 col-span-3">
+                    <div className="flex w-full min-h-52 mb-12 col-span-3">
                       <WYSIWYGEditor
                         content={newCourse.description}
                         handleEditorContent={(text) =>
@@ -320,6 +378,43 @@ export default function CourseManagement() {
                       className="col-span-3"
                     />
                   </div>
+                  <div className="grid grid-cols-4 items-center gap-4">
+                    <Label htmlFor="role" className="text-right">
+                      Categoria:
+                    </Label>
+                    <Select
+                      value={
+                        newCourse.category.length === 0
+                          ? "0"
+                          : newCourse.category
+                      }
+                      onValueChange={(value) =>
+                        setNewCourse({
+                          ...newCourse,
+                          category: value,
+                        })
+                      }
+                    >
+                      <SelectTrigger className="col-span-3">
+                        <SelectValue placeholder="Select a role" />
+                      </SelectTrigger>
+                      <SelectContent>
+                        <SelectItem value="0">Selecione um curso</SelectItem>
+                        {categories ? (
+                          categories?.map((category) => {
+                            return (
+                              <SelectItem key={category.id} value={category.id}>
+                                {category.name}
+                              </SelectItem>
+                            );
+                          })
+                        ) : (
+                          <></>
+                        )}
+                      </SelectContent>
+                    </Select>
+                  </div>
+
                   <div className="grid grid-cols-4 items-center gap-4">
                     <Label htmlFor="role" className="text-right">
                       Em Destaque:
@@ -400,7 +495,7 @@ export default function CourseManagement() {
             contents={filteredCourses}
             headers={[
               { key: "name", value: "Nome" },
-              { key: "description", value: "Descrição" },
+              { key: "shortDescription", value: "Resumo" },
               { key: "instructor", value: "Instrutor" },
             ]}
             handleDelete={handleDeleteCourse}

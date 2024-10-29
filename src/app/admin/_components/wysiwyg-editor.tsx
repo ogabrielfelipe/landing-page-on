@@ -124,7 +124,7 @@ export default function WYSIWYGEditor({
         theme="snow"
         value={content}
         onChange={handleEditorContent}
-        className="h-64 mb-5 rounded-md"
+        className="h-full mb-5 rounded-md"
         modules={modules}
         formats={formats}
       />

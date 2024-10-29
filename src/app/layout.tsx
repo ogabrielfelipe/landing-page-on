@@ -1,6 +1,9 @@
 import type { Metadata } from "next";
 import localFont from "next/font/local";
 import "./globals.css";
+
+import NextTopLoader from "nextjs-toploader";
+
 import { Toaster } from "@/components/ui/toaster";
 
 const geistSans = localFont({
@@ -50,6 +53,7 @@ export default function RootLayout({
       <body
         className={`${geistSans.variable} ${geistMono.variable} antialiased min-h-screen`}
       >
+        <NextTopLoader />
         {children}
         <Toaster />
       </body>

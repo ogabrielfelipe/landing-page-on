@@ -3,10 +3,12 @@ import { z } from "zod";
 
 export const courseSchema = z.object({
   name: z.string(),
+  shortDescription: z.string(),
   description: z.string(),
   image: z.string(),
   level: z.enum(["INITIAL", "INTERMEDIARY", "ADVANCED"]),
   duration: z.number({ coerce: true }),
+  categoryId: z.string(),
   starred: z.boolean().optional().default(false),
   instructor: z.string(),
 });

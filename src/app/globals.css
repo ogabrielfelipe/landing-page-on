@@ -12,7 +12,6 @@ body {
   }
 }
 
-
 @layer base {
   :root {
     --background: 0 0% 100%;
@@ -70,7 +69,6 @@ body {
   }
 }
 
-
 @layer base {
   * {
     @apply border-border;
@@ -78,4 +76,26 @@ body {
   body {
     @apply bg-background text-foreground;
   }
+}
+
+/* Scroll-bar */
+
+/* width */
+::-webkit-scrollbar {
+  width: 10px;
+}
+
+/* Track */
+::-webkit-scrollbar-track {
+  background: #cccccc;
+}
+
+/* Handle */
+::-webkit-scrollbar-thumb {
+  background: #353461;
+}
+
+/* Handle on hover */
+::-webkit-scrollbar-thumb:hover {
+  background: #181733;
 }

@@ -6,6 +6,7 @@ export const getCategoriesSchema = z.object({
   perPage: z.number({ coerce: true }).optional().default(10),
   id: z.string().optional(),
   name: z.string().optional(),
+  isActive: z.boolean({ coerce: true }).optional(),
 });
 
 export type GetCategoriesRequest = z.infer<typeof getCategoriesSchema>;

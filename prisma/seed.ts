@@ -16,21 +16,7 @@ async function main() {
         password,
       },
     }),
-    await prisma.company.upsert({
-      where: { document: "00000000000009" },
-      update: {},
-      create: {
-        name: "Company Name",
-        document: "00000000000009",
-        about: "This is a Company of the example",
-        zipCode: "00.000-0000",
-        city: "City Name",
-        state: "State Name",
-        neighborhood: "Neighborhood Name",
-        street: "Street Name",
-        number: "S/N",
-      },
-    }),
+
     await prisma.category.createMany({
       data: [
         {

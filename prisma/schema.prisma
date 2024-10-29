@@ -63,7 +63,7 @@ model Company{
   zipCode String @map("zip_code")
 
   latitude String
-  longetude String
+  longitude String
 
   @@map("company")
 }

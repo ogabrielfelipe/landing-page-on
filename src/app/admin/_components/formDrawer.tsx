@@ -24,7 +24,7 @@ export default function FormDrawer({
 }: FormDrawerProps) {
   return (
     <Drawer open={drawerOpen} direction="right" onOpenChange={setDrawerOpen}>
-      <DrawerContent className="h-screen w-[580px] overflow-y-auto overflow-x-hidden">
+      <DrawerContent className="h-screen w-[580px] overflow-y-auto overflow-x-hidden ">
         <DrawerHeader>
           <DrawerTitle>{title}</DrawerTitle>
           <DrawerDescription>{description}</DrawerDescription>
