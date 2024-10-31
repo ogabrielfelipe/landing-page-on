@@ -59,7 +59,7 @@ export async function GET(request: Request) {
 }
 
 async function createCompanies(data: CreateCompaniesRequest) {
-  const course = await prisma.course.create({
+  const course = await prisma.company.create({
     data,
   });
   return course;
@@ -68,27 +68,21 @@ async function createCompanies(data: CreateCompaniesRequest) {
 async function getCompanies(props: GetCompaniesRequest) {
   const { page, perPage, ...search } = props;
 
-  const companies = await prisma.course.findMany({
+  const companies = await prisma.company.findMany({
     where: {
       ...(search?.id && { id: search.id }),
       ...(search?.name && { name: { contains: search.name } }),
       ...(search?.document && { name: { contains: search.document } }),
-    },
-    orderBy: {
-      createdAt: "desc",
     },
     take: perPage,
     skip: (page - 1) * perPage,
   });
 
-  const countCompanies = await prisma.course.count({
+  const countCompanies = await prisma.company.count({
     where: {
       ...(search?.id && { id: search.id }),
       ...(search?.name && { name: { contains: search.name } }),
       ...(search?.document && { name: { contains: search.document } }),
-    },
-    orderBy: {
-      createdAt: "desc",
     },
   });
 

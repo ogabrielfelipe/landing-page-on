@@ -7,6 +7,8 @@ import {
   Layers,
   Settings,
   Users,
+  MessageSquareText,
+  Library,
 } from "lucide-react";
 
 import Link from "next/link";
@@ -58,10 +60,23 @@ export default function SideBar() {
           asChild
         >
           <Link href="/admin/courses">
-            <Layers className="h-5 w-5" />
+            <Library className="h-5 w-5" />
             {sidebarExpanded && <span className="ml-3">Cursos</span>}
           </Link>
         </Button>
+        <Button
+          variant="ghost"
+          className={`w-full justify-start text-blue-100 hover:bg-blue-700 hover:text-white ${
+            !sidebarExpanded && "justify-center"
+          }`}
+          asChild
+        >
+          <Link href="/admin/testimonials">
+            <MessageSquareText className="h-5 w-5" />
+            {sidebarExpanded && <span className="ml-3">Testemunhos</span>}
+          </Link>
+        </Button>
+
         <Button
           variant="ghost"
           className={`w-full justify-start text-blue-100 hover:bg-blue-700 hover:text-white ${

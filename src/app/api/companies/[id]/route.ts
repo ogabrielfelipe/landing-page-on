@@ -11,11 +11,16 @@ export async function PUT(request: Request) {
   const id = url.pathname.split("/").pop();
   const body = await request.json();
 
+  console.log(body);
+
   const bodyValidated = companyEditSchema.safeParse(body);
 
   if (!bodyValidated.success) {
     return NextResponse.json(
-      { message: "Invalid query parameters" },
+      {
+        message: "Invalid query parameters",
+        error: bodyValidated.error.formErrors,
+      },
       { status: 400 }
     );
   }
@@ -27,7 +32,7 @@ export async function PUT(request: Request) {
   }
 
   try {
-    await editCompany(company.id, bodyValidated.data);
+    await editCompany(bodyValidated.data);
     return NextResponse.json(
       { message: "Company updated successfully" },
       { status: 200 }
@@ -64,7 +69,7 @@ export async function DELETE(request: Request) {
   }
 }
 
-async function editCompany(id: string, data: EditCompaniesRequest) {
+async function editCompany({ id, data }: EditCompaniesRequest) {
   const company = await prisma.company.update({
     where: {
       id,

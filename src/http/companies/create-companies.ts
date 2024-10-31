@@ -18,7 +18,7 @@ export const companiesSchema = z.object({
 
 export type CreateCompaniesRequest = z.infer<typeof companiesSchema>;
 
-export async function createCategory(props: CreateCompaniesRequest) {
+export async function createCompany(props: CreateCompaniesRequest) {
   const validated = companiesSchema.safeParse(props);
 
   if (!validated.success) {
