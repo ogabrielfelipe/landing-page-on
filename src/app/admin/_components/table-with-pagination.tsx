@@ -28,7 +28,7 @@ import {
   TableHeader,
   TableRow,
 } from "@/components/ui/table";
-import { Star, StarFour } from "@phosphor-icons/react";
+import { Star } from "@phosphor-icons/react";
 import { Button } from "@/components/ui/button";
 import {
   Select,
@@ -47,6 +47,7 @@ type Pagination = {
 };
 
 interface TableWithPaginationProps {
+  // eslint-disable-next-line @typescript-eslint/no-explicit-any
   contents: Array<Record<string, any>>;
   pagination?: Pagination;
   headers: Array<Record<string, string>>;
@@ -58,6 +59,8 @@ interface TableWithPaginationProps {
   handleStarred?: (id: string) => void;
   isLoading: boolean;
   isPagination?: boolean;
+  isActionActive?: boolean;
+  handleActive?: (id: string) => void;
 }
 
 export default function TableWithPagination({
@@ -72,6 +75,9 @@ export default function TableWithPagination({
   handleStarred,
   isActions,
   isPagination = true,
+
+  isActionActive = false,
+  handleActive,
 }: TableWithPaginationProps) {
   return (
     <div className="flex flex-col  m-5 border-gray-200 rounded-lg overflow-auto max-h-[calc(100vh-200px)]">
@@ -89,7 +95,7 @@ export default function TableWithPagination({
           {contents.map((content) => {
             return (
               <TableRow key={content.id} className="hover:bg-gray-300/50">
-                {headers.map(({ key, value }) => {
+                {headers.map(({ key }) => {
                   return <TableCell key={key}> {content[key]} </TableCell>;
                 })}
 
@@ -102,13 +108,13 @@ export default function TableWithPagination({
                           color="#a0a21a"
                           className="cursor-pointer"
                           weight="fill"
-                          onClick={() => handleStarred(content.id)}
+                          onClick={() => handleStarred?.(content.id)}
                         />
                       ) : (
                         <Star
                           size={26}
                           className="cursor-pointer"
-                          onClick={() => handleStarred(content.id)}
+                          onClick={() => handleStarred?.(content.id)}
                         />
                       )}
                     </span>
@@ -117,6 +123,16 @@ export default function TableWithPagination({
 
                 {isActions && (
                   <TableCell>
+                    {isActionActive && (
+                      <Button
+                        variant="ghost"
+                        size="sm"
+                        onClick={() => handleActive?.(content.id)}
+                      >
+                        {content.isActive ? "Desativar" : "Ativar"}
+                      </Button>
+                    )}
+
                     <Button
                       variant="ghost"
                       size="sm"
@@ -139,12 +155,12 @@ export default function TableWithPagination({
                       <DialogContent>
                         <DialogHeader>
                           <DialogTitle>
-                            Tem certeza que deseja deletar este curso?
+                            Tem certeza que deseja deletar este registro?
                           </DialogTitle>
                           <DialogDescription>
                             <p>
-                              Ao Clicar em Sim, o curso com o título "
-                              {content.name}" será deletado permanentemente.
+                              Ao Clicar em Sim, o registro com o título
+                              {content.name} será deletado permanentemente.
                             </p>
                             <div className="flex gap-4 justify-center">
                               <DialogClose>
@@ -177,7 +193,7 @@ export default function TableWithPagination({
           <PaginationContent>
             <PaginationItem>
               <Select
-                value={pagination.perPage.toString()}
+                value={pagination?.perPage.toString()}
                 onValueChange={(value) =>
                   setPagination({
                     ...pagination,

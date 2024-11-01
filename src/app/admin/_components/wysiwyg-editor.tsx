@@ -1,6 +1,6 @@
 "use client";
 import * as React from "react";
-import { useState, useMemo } from "react";
+import { useMemo } from "react";
 import dynamic from "next/dynamic";
 
 import Quill from "quill";
