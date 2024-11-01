@@ -28,7 +28,7 @@ export async function editCompany(props: EditCompaniesRequest) {
     throw new Error("Invalid request");
   }
 
-  const { id, ...rest } = validated.data;
+  const { id } = validated.data;
 
   const response = await fetch(`${URLBase}/api/companies/${id}`, {
     method: "PUT",
