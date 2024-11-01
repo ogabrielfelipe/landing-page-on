@@ -39,7 +39,7 @@ import {
 } from "@/components/ui/select";
 import { Edit, Trash } from "lucide-react";
 
-type PaginationCourses = {
+type Pagination = {
   page: number;
   perPage: number;
   totalPage: number;
@@ -48,9 +48,9 @@ type PaginationCourses = {
 
 interface TableWithPaginationProps {
   contents: Array<Record<string, any>>;
-  paginationCourses?: PaginationCourses;
+  pagination?: Pagination;
   headers: Array<Record<string, string>>;
-  setPaginationCourses?: (paginationCourses: PaginationCourses) => void;
+  setPagination?: (pagination: Pagination) => void;
   handleDelete: (id: string) => void;
   handleEdit: (id: string) => void;
   isActions: boolean;
@@ -66,8 +66,8 @@ export default function TableWithPagination({
   handleDelete,
   handleEdit,
   isLoading,
-  paginationCourses,
-  setPaginationCourses,
+  pagination,
+  setPagination,
   starred,
   handleStarred,
   isActions,
@@ -89,9 +89,9 @@ export default function TableWithPagination({
           {contents.map((content) => {
             return (
               <TableRow key={content.id} className="hover:bg-gray-300/50">
-                {headers.map(({ key, value }) => (
-                  <TableCell key={key}> {content[key]} </TableCell>
-                ))}
+                {headers.map(({ key, value }) => {
+                  return <TableCell key={key}> {content[key]} </TableCell>;
+                })}
 
                 {starred && (
                   <TableCell>
@@ -177,15 +177,15 @@ export default function TableWithPagination({
           <PaginationContent>
             <PaginationItem>
               <Select
-                value={paginationCourses.perPage.toString()}
+                value={pagination.perPage.toString()}
                 onValueChange={(value) =>
-                  setPaginationCourses({
-                    ...paginationCourses,
+                  setPagination({
+                    ...pagination,
                     perPage: parseInt(value),
                     page:
-                      paginationCourses.totalPage >= parseInt(value)
+                      pagination.totalPage >= parseInt(value)
                         ? 1
-                        : paginationCourses.page,
+                        : pagination.page,
                   })
                 }
               >
@@ -205,42 +205,40 @@ export default function TableWithPagination({
               <PaginationPrevious
                 href="#"
                 onClick={() => {
-                  if (paginationCourses.page > 1) {
-                    setPaginationCourses({
-                      ...paginationCourses,
-                      page: paginationCourses.page - 1,
+                  if (pagination.page > 1) {
+                    setPagination({
+                      ...pagination,
+                      page: pagination.page - 1,
                     });
                   }
                 }}
               />
             </PaginationItem>
 
-            {Array.from({ length: paginationCourses.totalPage }).map(
-              (_, index) => (
-                <PaginationItem key={index} className="cursor-pointer">
-                  <PaginationLink
-                    onClick={() =>
-                      setPaginationCourses({
-                        ...paginationCourses,
-                        page: index + 1,
-                      })
-                    }
-                    isActive={paginationCourses.page === index + 1}
-                  >
-                    {index + 1}
-                  </PaginationLink>
-                </PaginationItem>
-              )
-            )}
+            {Array.from({ length: pagination.totalPage }).map((_, index) => (
+              <PaginationItem key={index} className="cursor-pointer">
+                <PaginationLink
+                  onClick={() =>
+                    setPagination({
+                      ...pagination,
+                      page: index + 1,
+                    })
+                  }
+                  isActive={pagination.page === index + 1}
+                >
+                  {index + 1}
+                </PaginationLink>
+              </PaginationItem>
+            ))}
 
             <PaginationItem>
               <PaginationNext
                 href="#"
                 onClick={() => {
-                  if (paginationCourses.page < paginationCourses.totalPage) {
-                    setPaginationCourses({
-                      ...paginationCourses,
-                      page: paginationCourses.page + 1,
+                  if (pagination.page < pagination.totalPage) {
+                    setPagination({
+                      ...pagination,
+                      page: pagination.page + 1,
                     });
                   }
                 }}

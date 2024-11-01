@@ -4,7 +4,6 @@ import {
   BarChart,
   ChevronRight,
   ChevronLeft,
-  Layers,
   Settings,
   Users,
   MessageSquareText,
@@ -96,7 +95,6 @@ export default function SideBar() {
           className="w-full justify-center text-blue-100 hover:bg-blue-700 hover:text-white"
           onClick={() => {
             setSidebarExpanded(!sidebarExpanded);
-            console.log(!sidebarExpanded);
           }}
         >
           {sidebarExpanded ? (
