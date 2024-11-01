@@ -228,8 +228,8 @@ export default function TestimonialsManager() {
     setDrawerOpen(false);
     if (response.status === 200) {
       toast({
-        title: "Curso deletado com sucesso",
-        description: "O curso foi deletado com sucesso",
+        title: "Testemunho deletado com sucesso",
+        description: "O testemunho foi deletado com sucesso",
       });
     }
 
@@ -321,7 +321,7 @@ export default function TestimonialsManager() {
 
                   <div className="grid grid-cols-4 items-center mt-8 gap-4">
                     <Label htmlFor="role" className="text-right">
-                      Curso:
+                      Testemunho:
                     </Label>
                     <Select
                       disabled={newTestimonial.id?.length === 0 ? false : true}
@@ -341,7 +341,9 @@ export default function TestimonialsManager() {
                         <SelectValue placeholder="Select a role" />
                       </SelectTrigger>
                       <SelectContent>
-                        <SelectItem value="0">Selecione o curso</SelectItem>
+                        <SelectItem value="0">
+                          Selecione o testemunho
+                        </SelectItem>
                         {courses &&
                           courses.map((course) => {
                             return (
@@ -370,7 +372,7 @@ export default function TestimonialsManager() {
             headers={[
               { key: "student", value: "Aluno" },
               { key: "description", value: "Descrição" },
-              { key: "courseName", value: "Curso" },
+              { key: "courseName", value: "Testemunho" },
             ]}
             handleDelete={handleDeleteTestimonial}
             handleEdit={selectTestimonialForEdit}
