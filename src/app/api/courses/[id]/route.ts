@@ -2,24 +2,25 @@ import { prisma } from "@/lib/prisma";
 import { NextResponse } from "next/server";
 import { z } from "zod";
 
-const courseSchema = z.object({
+const courseSchemaEdit = z.object({
   name: z.string(),
+  shortDescription: z.string(),
+  categoryId: z.string().uuid(),
   description: z.string(),
   image: z.string(),
+  level: z.enum(["INITIAL", "INTERMEDIARY", "ADVANCED"]).default("INITIAL"),
   duration: z.number({ coerce: true }),
   starred: z.boolean().optional().default(false),
   instructor: z.string(),
 });
-
-type CreateCoursesRequest = z.infer<typeof courseSchema>;
+type EditCoursesRequest = z.infer<typeof courseSchemaEdit>;
 
 export async function PUT(request: Request) {
   const url = new URL(request.url);
   const id = url.pathname.split("/").pop();
   const body = await request.json();
 
-  const bodyValidated = courseSchema.safeParse(body);
-
+  const bodyValidated = courseSchemaEdit.safeParse(body);
   if (!bodyValidated.success) {
     return NextResponse.json(
       { message: "Invalid query parameters" },
@@ -31,6 +32,15 @@ export async function PUT(request: Request) {
 
   if (!course) {
     return NextResponse.json({ message: "Course not found" }, { status: 404 });
+  }
+
+  const category = await findCategoryById(bodyValidated.data.categoryId);
+
+  if (!category) {
+    return NextResponse.json(
+      { message: "Category not found" },
+      { status: 404 }
+    );
   }
 
   try {
@@ -71,7 +81,7 @@ export async function DELETE(request: Request) {
   }
 }
 
-async function editCourse(id: string, data: CreateCoursesRequest) {
+async function editCourse(id: string, data: EditCoursesRequest) {
   const course = await prisma.course.update({
     where: {
       id,
@@ -93,4 +103,14 @@ async function findById(id?: string) {
     where: { id },
   });
   return course;
+}
+
+async function findCategoryById(categoryId: string) {
+  const category = await prisma.category.findUniqueOrThrow({
+    where: {
+      id: categoryId,
+    },
+  });
+
+  return category;
 }

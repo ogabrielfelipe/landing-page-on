@@ -37,9 +37,9 @@ import { getCategories } from "@/http/categories/get-categories";
 type Course = {
   id: string;
   name: string;
-  resume: string;
+  shortDescription: string;
   description: string;
-  category: string;
+  categoryId: string;
   image: string;
   level: "INITIAL" | "INTERMEDIARY" | "ADVANCED";
   duration: number;
@@ -79,18 +79,33 @@ export default function CourseManagement() {
   const [newCourse, setNewCourse] = useState<Course>({
     id: "",
     name: "",
-    resume: "",
+    shortDescription: "",
     description: "",
-    category: "",
+    categoryId: "0",
     image: "",
-    duration: 0,
     level: "INITIAL",
+    duration: 0,
     starred: false,
     instructor: "",
   });
   const [categories, setCategories] = useState<Category[] | null>(null);
   const [drawerOpen, setDrawerOpen] = useState(false);
   const [isLoading, setIsLoading] = useState(false);
+
+  const cleanFields = () => {
+    setNewCourse({
+      id: "",
+      name: "",
+      shortDescription: "",
+      description: "",
+      categoryId: "0",
+      image: "",
+      level: "INITIAL",
+      duration: 0,
+      starred: false,
+      instructor: "",
+    });
+  };
 
   const fetchCourses = useCallback(async () => {
     const coursesFn = await getCourses({
@@ -129,8 +144,6 @@ export default function CourseManagement() {
       perPage: 100,
     });
     const data = await categoriesFn.json();
-
-    console.log(data);
 
     if (categoriesFn.status === 200) {
       setCategories(data.categories);
@@ -171,8 +184,8 @@ export default function CourseManagement() {
       }
     } else {
       response = await createCourse({
-        shortDescription: newCourse.resume,
-        categoryId: newCourse.category,
+        shortDescription: newCourse.shortDescription,
+        categoryId: newCourse.categoryId,
         description: newCourse.description,
         duration: newCourse.duration,
         instructor: newCourse.instructor,
@@ -195,25 +208,14 @@ export default function CourseManagement() {
     setIsLoading(false);
     setDrawerOpen(false);
 
-    setNewCourse({
-      id: "",
-      name: "",
-      resume: "",
-      description: "",
-      category: "",
-      image: "",
-      level: "INITIAL",
-      duration: 0,
-      starred: false,
-      instructor: "",
-    });
+    cleanFields();
   };
 
   const selectCourseForEdit = async (id: string) => {
-    const course = courses.find((course) => course.id === id);
+    const courseFound = courses.find((course) => course.id === id);
 
-    if (course) {
-      setNewCourse(course);
+    if (courseFound) {
+      setNewCourse(courseFound);
     }
 
     setDrawerOpen(true);
@@ -241,8 +243,6 @@ export default function CourseManagement() {
     setIsLoading(true);
     const response = await starredCourse({ id });
 
-    console.log(response);
-
     const courseSelected = courses.find((course) => course.id === id);
     if (response.status === 200) {
       setIsLoading(false);
@@ -268,18 +268,7 @@ export default function CourseManagement() {
   };
 
   const handleClickNewCourse = () => {
-    setNewCourse({
-      id: "",
-      name: "",
-      resume: "",
-      description: "",
-      category: "",
-      image: "",
-      level: "INITIAL",
-      duration: 0,
-      starred: false,
-      instructor: "",
-    });
+    cleanFields();
     setDrawerOpen(true);
   };
 
@@ -337,9 +326,12 @@ export default function CourseManagement() {
                     </Label>
                     <Input
                       id="name"
-                      value={newCourse.resume}
+                      value={newCourse.shortDescription}
                       onChange={(e) =>
-                        setNewCourse({ ...newCourse, resume: e.target.value })
+                        setNewCourse({
+                          ...newCourse,
+                          shortDescription: e.target.value,
+                        })
                       }
                       className="col-span-3"
                     />
@@ -384,14 +376,14 @@ export default function CourseManagement() {
                     </Label>
                     <Select
                       value={
-                        newCourse.category.length === 0
+                        newCourse.categoryId.length === 1
                           ? "0"
-                          : newCourse.category
+                          : newCourse.categoryId
                       }
                       onValueChange={(value) =>
                         setNewCourse({
                           ...newCourse,
-                          category: value,
+                          categoryId: value,
                         })
                       }
                     >
@@ -443,7 +435,9 @@ export default function CourseManagement() {
                     </Label>
                     <Select
                       value={newCourse.level}
-                      onValueChange={(value) =>
+                      onValueChange={(
+                        value: "INITIAL" | "INTERMEDIARY" | "ADVANCED"
+                      ) =>
                         setNewCourse({
                           ...newCourse,
                           level: value,
@@ -501,8 +495,8 @@ export default function CourseManagement() {
             handleDelete={handleDeleteCourse}
             handleEdit={selectCourseForEdit}
             isLoading={isLoading}
-            paginationCourses={paginationCourses}
-            setPaginationCourses={setPaginationCourses}
+            pagination={paginationCourses}
+            setPagination={setPaginationCourses}
             isActions={true}
             starred={true}
             handleStarred={handleStarCourse}
