@@ -3,7 +3,7 @@
 import { Button } from "@/components/ui/button";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 
-import { Users, Layers, LucideProps } from "lucide-react";
+import { Layers, LucideProps, MessageSquareText } from "lucide-react";
 import SideBar from "./_components/sideBar";
 import { useSession } from "next-auth/react";
 import Loading from "./_components/loading";
@@ -19,6 +19,7 @@ import {
 import { getCourses } from "@/http/courses/get-courses";
 import TableWithPagination from "./_components/table-with-pagination";
 import Link from "next/link";
+import { getTotals } from "@/http/dashboard/getTotals";
 
 type Course = {
   id: string;
@@ -30,6 +31,14 @@ type Course = {
   instructor: string;
 };
 
+type Totals = {
+  total: {
+    totalCourses: number;
+    totalNewCourses: number;
+    totalTestimonials: number;
+  };
+};
+
 export default function AdminDashboard() {
   const { status } = useSession({
     required: true,
@@ -37,9 +46,9 @@ export default function AdminDashboard() {
   const [isLoading, setIsLoading] = useState(false);
 
   const [courses, setCourses] = useState<Course[]>([]);
+  const [totals, setTotals] = useState<Totals>();
 
   const fetchCourses = useCallback(async () => {
-    setIsLoading(true);
     const coursesFn = await getCourses({
       page: 1,
       perPage: 5,
@@ -50,11 +59,21 @@ export default function AdminDashboard() {
     const courses = data.courses;
 
     setCourses(courses);
-    setIsLoading(false);
   }, []);
 
+  const fetchTotals = async () => {
+    const totalsFn = await getTotals();
+
+    const data = await totalsFn.json();
+
+    setTotals(data);
+  };
+
   useEffect(() => {
-    fetchCourses();
+    setIsLoading(true);
+    Promise.all([fetchTotals(), fetchCourses()]);
+
+    setIsLoading(false);
   }, [fetchCourses]);
 
   if (status === "loading") return <Loading />;
@@ -74,18 +93,18 @@ export default function AdminDashboard() {
             <div className="grid gap-6 mb-8 md:grid-cols-2 xl:grid-cols-3">
               <StatCard
                 title="Total de Cursos"
-                value="6,389"
+                value={String(totals?.total.totalCourses)}
                 icon={<Layers className="h-8 w-8 text-blue-600" />}
               />
               <StatCard
                 title="Novos Cursos"
-                value="120"
+                value={String(totals?.total.totalNewCourses)}
                 icon={<Layers className="h-8 w-8 text-green-600" />}
               />
               <StatCard
-                title="Total de usuários"
-                value="1,437"
-                icon={<Users className="h-8 w-8 text-yellow-600" />}
+                title="Total de Testemunhos"
+                value={String(totals?.total.totalTestimonials)}
+                icon={<MessageSquareText className="h-8 w-8 text-yellow-600" />}
               />
             </div>
 
