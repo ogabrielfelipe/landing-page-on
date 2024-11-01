@@ -40,7 +40,7 @@ export async function POST(request: Request) {
   try {
     await createTestimonials(response.data);
     return NextResponse.json({
-      message: "Category created successfully",
+      message: "Testimonial created successfully",
       status: 201,
     });
   } catch (error) {
@@ -67,12 +67,17 @@ export async function GET(request: Request) {
     );
   }
 
-  const testimonials = await getTestimonials(query.data);
-  return NextResponse.json({ ...testimonials }, { status: 200 });
+  try {
+    const testimonials = await getTestimonials(query.data);
+    return NextResponse.json({ ...testimonials }, { status: 200 });
+  } catch (e) {
+    console.log("Erros: ", e);
+    return NextResponse.json({ errors: e }, { status: 500 });
+  }
 }
 
 async function createTestimonials(data: CreateTestimonialsRequest) {
-  const testimonial = await prisma.testimonials.create({
+  const testimonial = await prisma.testimonial.create({
     data,
   });
   return testimonial;
@@ -81,26 +86,33 @@ async function createTestimonials(data: CreateTestimonialsRequest) {
 async function getTestimonials(props: GetTestimonialsRequest) {
   const { page, perPage, ...search } = props;
 
-  const testimonials = await prisma.course.findMany({
+  const testimonials = await prisma.testimonial.findMany({
     where: {
-      ...(search?.id && { name: { contains: search.id } }),
-      ...(search?.student && { name: { contains: search.student } }),
-      ...(search?.description && { name: { contains: search.description } }),
-      ...(search?.courseId && { name: { contains: search.courseId } }),
+      ...(search?.id && { id: { contains: search.id } }),
+      ...(search?.student && { student: { contains: search.student } }),
+      ...(search?.description && {
+        description: { contains: search.description },
+      }),
+      ...(search?.courseId && { courseId: { contains: search.courseId } }),
     },
     orderBy: {
       createdAt: "desc",
+    },
+    include: {
+      course: true,
     },
     take: perPage,
     skip: (page - 1) * perPage,
   });
 
-  const countTestimonials = await prisma.course.count({
+  const countTestimonials = await prisma.testimonial.count({
     where: {
-      ...(search?.id && { name: { contains: search.id } }),
-      ...(search?.student && { name: { contains: search.student } }),
-      ...(search?.description && { name: { contains: search.description } }),
-      ...(search?.courseId && { name: { contains: search.courseId } }),
+      ...(search?.id && { id: { contains: search.id } }),
+      ...(search?.student && { student: { contains: search.student } }),
+      ...(search?.description && {
+        description: { contains: search.description },
+      }),
+      ...(search?.courseId && { courseId: { contains: search.courseId } }),
     },
     orderBy: {
       createdAt: "desc",
@@ -108,7 +120,7 @@ async function getTestimonials(props: GetTestimonialsRequest) {
   });
 
   return {
-    testimonials,
+    testimonials: testimonials,
     page,
     perPage,
     totalPage: Math.ceil(countTestimonials / perPage),

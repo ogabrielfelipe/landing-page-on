@@ -27,5 +27,6 @@ export async function getTestimonials(props: GetTestimonialsRequest) {
       method: "GET",
     }
   );
+
   return response;
 }

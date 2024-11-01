@@ -9,7 +9,7 @@ export const testimonialsSchema = z.object({
 
 export type CreateTestimonialsRequest = z.infer<typeof testimonialsSchema>;
 
-export async function createCategory(props: CreateTestimonialsRequest) {
+export async function createTestimonial(props: CreateTestimonialsRequest) {
   const validated = testimonialsSchema.safeParse(props);
 
   if (!validated.success) {

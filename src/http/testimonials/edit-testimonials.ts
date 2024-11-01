@@ -15,11 +15,11 @@ export async function editTestimonial(props: EditTestimonialsRequest) {
     throw new Error("Invalid request");
   }
 
-  const { id, ...rest } = validated.data;
+  const { id } = validated.data;
 
   const response = await fetch(`${URLBase}/api/testimonials/${id}`, {
     method: "PUT",
-    body: JSON.stringify(rest),
+    body: JSON.stringify(validated.data),
   });
 
   return response;

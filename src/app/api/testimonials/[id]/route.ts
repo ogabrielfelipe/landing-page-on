@@ -15,7 +15,10 @@ export async function PUT(request: Request) {
 
   if (!bodyValidated.success) {
     return NextResponse.json(
-      { message: "Invalid query parameters" },
+      {
+        message: "Invalid query parameters",
+        errors: bodyValidated.error.formErrors,
+      },
       { status: 400 }
     );
   }
@@ -71,24 +74,26 @@ export async function DELETE(request: Request) {
 }
 
 async function editTestimonial(id: string, data: EditTestimonialsRequest) {
-  const testimonial = await prisma.testimonials.update({
+  const testimonial = await prisma.testimonial.update({
     where: {
       id,
     },
-    data,
+    data: {
+      description: data.description,
+    },
   });
   return testimonial;
 }
 
 async function deleteTestimonial(id: string) {
-  const testimonial = await prisma.testimonials.delete({
+  const testimonial = await prisma.testimonial.delete({
     where: { id },
   });
   return testimonial;
 }
 
 async function findById(id?: string) {
-  const testimonial = await prisma.testimonials.findUnique({
+  const testimonial = await prisma.testimonial.findUnique({
     where: { id },
   });
   return testimonial;
