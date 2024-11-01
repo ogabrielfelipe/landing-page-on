@@ -2,21 +2,20 @@
 
 import { Button } from "@/components/ui/button";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
-import {
-  Table,
-  TableBody,
-  TableCell,
-  TableHead,
-  TableHeader,
-  TableRow,
-} from "@/components/ui/table";
-import { Input } from "@/components/ui/input";
-import { Users, BarChart, Layers } from "lucide-react";
+
+import { Users, Layers, LucideProps } from "lucide-react";
 import SideBar from "./_components/sideBar";
 import { useSession } from "next-auth/react";
 import Loading from "./_components/loading";
 import HeaderAdmin from "./_components/header";
-import { useCallback, useEffect, useState } from "react";
+import {
+  ForwardRefExoticComponent,
+  ReactElement,
+  RefAttributes,
+  useCallback,
+  useEffect,
+  useState,
+} from "react";
 import { getCourses } from "@/http/courses/get-courses";
 import TableWithPagination from "./_components/table-with-pagination";
 import Link from "next/link";
@@ -35,12 +34,12 @@ export default function AdminDashboard() {
   const { status } = useSession({
     required: true,
   });
-  const [searchTerm, setSearchTerm] = useState("");
   const [isLoading, setIsLoading] = useState(false);
 
   const [courses, setCourses] = useState<Course[]>([]);
 
   const fetchCourses = useCallback(async () => {
+    setIsLoading(true);
     const coursesFn = await getCourses({
       page: 1,
       perPage: 5,
@@ -51,28 +50,14 @@ export default function AdminDashboard() {
     const courses = data.courses;
 
     setCourses(courses);
+    setIsLoading(false);
   }, []);
 
   useEffect(() => {
     fetchCourses();
   }, [fetchCourses]);
 
-  const filteredCourses = courses.filter(
-    (course) =>
-      course.name.toLowerCase().includes(searchTerm.toLowerCase()) ||
-      course.description.toLowerCase().includes(searchTerm.toLowerCase()) ||
-      course.instructor.toLowerCase().includes(searchTerm.toLowerCase())
-  );
-
   if (status === "loading") return <Loading />;
-
-  const handleDeleteCourse = async (id: string) => {
-    console.log(id);
-  };
-
-  const handleSelectCourseForEdit = async (id: string) => {
-    console.log(id);
-  };
 
   return (
     <div className="flex h-screen bg-gray-100">
@@ -81,7 +66,6 @@ export default function AdminDashboard() {
       <div className="flex-1 flex flex-col overflow-hidden">
         <HeaderAdmin title="Dashboard" />
 
-        {/* Dashboard Content */}
         <main className="flex-1 overflow-x-hidden overflow-y-auto bg-gray-100">
           <div className="container mx-auto px-6 py-8">
             <h2 className="text-2xl font-semibold text-gray-800 mb-4">
@@ -119,14 +103,14 @@ export default function AdminDashboard() {
                   </Button>
                 </div>
                 <TableWithPagination
-                  contents={filteredCourses}
+                  contents={courses}
                   headers={[
                     { key: "name", value: "Nome" },
-                    { key: "description", value: "Descrição" },
+                    { key: "shortDescription", value: "Resumo" },
                     { key: "instructor", value: "Instrutor" },
                   ]}
-                  handleDelete={handleDeleteCourse}
-                  handleEdit={handleSelectCourseForEdit}
+                  handleDelete={() => {}}
+                  handleEdit={() => {}}
                   isLoading={isLoading}
                   isActions={false}
                   starred={false}
@@ -141,7 +125,17 @@ export default function AdminDashboard() {
   );
 }
 
-function StatCard({ title, value, icon }) {
+type statProps = {
+  title: string;
+  value: string;
+  icon: ReactElement<
+    ForwardRefExoticComponent<
+      Omit<LucideProps, "ref"> & RefAttributes<SVGSVGElement>
+    >
+  >;
+};
+
+function StatCard({ title, value, icon }: statProps) {
   return (
     <Card>
       <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-2">
@@ -154,10 +148,3 @@ function StatCard({ title, value, icon }) {
     </Card>
   );
 }
-
-const users = [
-  { id: 1, name: "John Doe", email: "john@example.com", role: "Admin" },
-  { id: 2, name: "Jane Smith", email: "jane@example.com", role: "User" },
-  { id: 3, name: "Bob Johnson", email: "bob@example.com", role: "User" },
-  { id: 4, name: "Alice Brown", email: "alice@example.com", role: "Editor" },
-];
