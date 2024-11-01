@@ -74,6 +74,7 @@ async function getCategories(props: GetCategoriesRequest) {
     where: {
       ...(search?.id && { id: search.id }),
       ...(search?.name && { name: { contains: search.name } }),
+      ...(search?.isActive && { isActive: search.isActive }),
     },
     orderBy: {
       createdAt: "desc",
@@ -86,6 +87,7 @@ async function getCategories(props: GetCategoriesRequest) {
     where: {
       ...(search?.id && { id: search.id }),
       ...(search?.name && { name: { contains: search.name } }),
+      ...(search?.isActive && { isActive: search.isActive }),
     },
     orderBy: {
       createdAt: "desc",

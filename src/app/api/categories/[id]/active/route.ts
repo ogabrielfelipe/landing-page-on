@@ -3,7 +3,7 @@ import { NextResponse } from "next/server";
 
 export async function PATCH(request: Request) {
   const url = new URL(request.url);
-  const id = url.pathname.split("/").pop();
+  const id = url.pathname.split("/")[3];
 
   const category = await findById(id);
 

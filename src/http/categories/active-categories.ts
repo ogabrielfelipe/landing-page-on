@@ -16,7 +16,7 @@ export async function activeCategory(props: ActiveCategoriesRequest) {
 
   const { id } = validated.data;
 
-  const response = await fetch(`${URLBase}/api/categories/${id}`, {
+  const response = await fetch(`${URLBase}/api/categories/${id}/active`, {
     method: "PATCH",
   });
 

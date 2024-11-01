@@ -13,14 +13,15 @@ export async function editCategory(props: EditCategoriesRequest) {
   const validated = categoryEditSchema.safeParse(props);
 
   if (!validated.success) {
+    console.log(validated.error.formErrors);
     throw new Error("Invalid request");
   }
 
-  const { id, ...rest } = validated.data;
+  const { id } = validated.data;
 
   const response = await fetch(`${URLBase}/api/categories/${id}`, {
     method: "PUT",
-    body: JSON.stringify(rest),
+    body: JSON.stringify(validated.data),
   });
 
   return response;
