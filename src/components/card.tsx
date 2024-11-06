@@ -26,7 +26,7 @@ export default function Card({ contents }: CardProps) {
               | Instrutor: Prof. {content.instructor}
             </p>
             <div
-              dangerouslySetInnerHTML={{ __html: content.description }}
+              dangerouslySetInnerHTML={{ __html: content.shortDescription }}
             ></div>
           </div>
         );

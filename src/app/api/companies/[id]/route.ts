@@ -16,6 +16,7 @@ export async function PUT(request: Request) {
   const bodyValidated = companyEditSchema.safeParse(body);
 
   if (!bodyValidated.success) {
+    console.log(bodyValidated.error);
     return NextResponse.json(
       {
         message: "Invalid query parameters",

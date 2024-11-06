@@ -14,8 +14,8 @@ export const companyEditSchema = z.object({
     city: z.string().min(1),
     state: z.string().min(1),
     zipCode: z.string().min(1),
-    latitude: z.string().optional(),
-    longitude: z.string().optional(),
+    latitude: z.string().optional().default("0"),
+    longitude: z.string().optional().default("0"),
   }),
 });
 
@@ -25,6 +25,7 @@ export async function editCompany(props: EditCompaniesRequest) {
   const validated = companyEditSchema.safeParse(props);
 
   if (!validated.success) {
+    console.log(validated.error);
     throw new Error("Invalid request");
   }
 

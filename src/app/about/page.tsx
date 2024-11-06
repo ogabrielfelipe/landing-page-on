@@ -2,14 +2,8 @@
 
 import Footer from "@/components/footer";
 import Header from "@/components/header";
-import Loading from "../admin/_components/loading";
-import { useEffect, useState } from "react";
 
 export default function About() {
-  //   const [isLoading, setIsLoading] = useState<boolean>(true);
-
-  //   useEffect(() => {}, []);
-
   return (
     <>
       <Header />
@@ -35,8 +29,6 @@ export default function About() {
         </section>
       </main>
       <Footer />
-      {/* 
-      {isLoading && <Loading />} */}
     </>
   );
 }

@@ -1,9 +1,23 @@
-export default function Header() {
+import Image from "next/image";
+
+type HomeProps = {
+  title?: string;
+  image: string;
+};
+
+export default function Header({ title }: HomeProps) {
   return (
     <>
-      <header className="bg-blue-900 text-blue-100 text-center p-8">
-        <h1 className="m-0 text-2xl">Instituto de Ensino Eduardo Meotte</h1>
-        <p className="m-0 text-sm">Excelência em Educação Musical</p>
+      <header className="bg-blue-900 text-blue-100 text-center p-8 flex flex-wrap justify-evenly items-center">
+        <Image
+          src={
+            "https://live.staticflickr.com/65535/54120123332_5e2356c26b_c.jpg"
+          }
+          alt={`logo-${title}`}
+          width={100}
+          height={100}
+        />
+        <h1 className="m-0 text-2xl">{title}</h1>
       </header>
 
       <nav
