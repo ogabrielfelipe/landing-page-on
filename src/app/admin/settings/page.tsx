@@ -7,7 +7,6 @@ import HeaderAdmin from "../_components/header";
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
-import WYSIWYGEditor from "../_components/wysiwyg-editor";
 import { useEffect, useState } from "react";
 import { Button } from "@/components/ui/button";
 import {
@@ -35,6 +34,11 @@ import { createCompany } from "@/http/companies/create-companies";
 import { getCompanies } from "@/http/companies/get-companies";
 import { editCompany } from "@/http/companies/edit-companies";
 import Loading from "../_components/loading";
+import dynamic from "next/dynamic";
+
+const WYSIWYGEditor = dynamic(() => import("../_components/wysiwyg-editor"), {
+  ssr: false,
+});
 
 type Contacts = {
   id: string;
@@ -96,6 +100,10 @@ export default function SettingsManager() {
     const companyFn = await getCompanies({ page: 1, perPage: 1 });
 
     const { companies } = await companyFn.json();
+
+    if (companies.length === 0) {
+      return;
+    }
 
     const company = companies[0];
 
@@ -185,6 +193,8 @@ export default function SettingsManager() {
           id: companyId,
           data: {
             ...company,
+            latitude: company.latitude || "",
+            longitude: company.longitude || "",
             contacts: JSON.stringify(company.contacts),
           },
         });
@@ -255,7 +265,6 @@ export default function SettingsManager() {
                       }
                     />
                   </div>
-
                   <div className="flex flex-col mb-3 items-start gap-4">
                     <Label htmlFor="document" className="text-right">
                       Documento:
@@ -297,7 +306,11 @@ export default function SettingsManager() {
                             {Object.keys(typeContacts).map((key) => {
                               return (
                                 <SelectItem key={key} value={key}>
-                                  {typeContacts[key]}
+                                  {
+                                    typeContacts[
+                                      key as keyof typeof typeContacts
+                                    ]
+                                  }
                                 </SelectItem>
                               );
                             })}
@@ -342,7 +355,11 @@ export default function SettingsManager() {
                               return (
                                 <TableRow key={contact.id}>
                                   <TableCell>
-                                    {typeContacts[contact.type]}
+                                    {
+                                      typeContacts[
+                                        contact.type as keyof typeof typeContacts
+                                      ]
+                                    }
                                   </TableCell>
                                   <TableCell>{contact.content}</TableCell>
                                   <TableCell>

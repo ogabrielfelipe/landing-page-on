@@ -5,7 +5,6 @@ import {
   DropdownMenuTrigger,
   DropdownMenu,
   DropdownMenuContent,
-  DropdownMenuSubContent,
   DropdownMenuLabel,
   DropdownMenuSeparator,
   DropdownMenuItem,

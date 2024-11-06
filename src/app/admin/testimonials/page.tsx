@@ -28,10 +28,20 @@ import { toast } from "@/hooks/use-toast";
 import { createTestimonial } from "@/http/testimonials/create-testimonials";
 import { editTestimonial } from "@/http/testimonials/edit-testimonials";
 import { deleteTestimonial } from "@/http/testimonials/delete-testimonials";
-import TableWithPagination from "../_components/table-with-pagination";
 import FormDrawer from "../_components/formDrawer";
-import WYSIWYGEditor from "../_components/wysiwyg-editor";
 import { getCourses } from "@/http/courses/get-courses";
+import dynamic from "next/dynamic";
+
+const WYSIWYGEditor = dynamic(() => import("../_components/wysiwyg-editor"), {
+  ssr: false,
+});
+
+const TableWithPagination = dynamic(
+  () => import("../_components/table-with-pagination"),
+  {
+    ssr: false,
+  }
+);
 
 type Course = {
   id: string;

@@ -35,7 +35,6 @@ import {
   SelectContent,
   SelectItem,
   SelectTrigger,
-  SelectValue,
 } from "@/components/ui/select";
 import { Edit, Trash } from "lucide-react";
 
@@ -49,9 +48,9 @@ type Pagination = {
 interface TableWithPaginationProps {
   // eslint-disable-next-line @typescript-eslint/no-explicit-any
   contents: Array<Record<string, any>>;
-  pagination?: Pagination;
+  pagination?: Pagination | null;
   headers: Array<Record<string, string>>;
-  setPagination?: (pagination: Pagination) => void;
+  setPagination?: (pagination: Pagination) => void | null;
   handleDelete: (id: string) => void;
   handleEdit: (id: string) => void;
   isActions: boolean;
@@ -194,20 +193,21 @@ export default function TableWithPagination({
             <PaginationItem>
               <Select
                 value={pagination?.perPage.toString()}
-                onValueChange={(value) =>
-                  setPagination({
-                    ...pagination,
-                    perPage: parseInt(value),
-                    page:
-                      pagination.totalPage >= parseInt(value)
-                        ? 1
-                        : pagination.page,
-                  })
-                }
+                onValueChange={(value) => {
+                  if (pagination) {
+                    setPagination?.({
+                      ...pagination,
+                      perPage: parseInt(value),
+                      page:
+                        pagination.totalPage &&
+                        pagination.totalPage >= parseInt(value)
+                          ? 1
+                          : pagination.page,
+                    });
+                  }
+                }}
               >
-                <SelectTrigger className="col-span-3">
-                  <SelectValue placeholder="Select a role" />
-                </SelectTrigger>
+                <SelectTrigger className="col-span-3"></SelectTrigger>
                 <SelectContent>
                   <SelectItem value="10">10</SelectItem>
                   <SelectItem value="20">20</SelectItem>
@@ -221,41 +221,49 @@ export default function TableWithPagination({
               <PaginationPrevious
                 href="#"
                 onClick={() => {
-                  if (pagination.page > 1) {
-                    setPagination({
-                      ...pagination,
-                      page: pagination.page - 1,
-                    });
+                  if (pagination) {
+                    if (pagination.page > 1) {
+                      setPagination?.({
+                        ...pagination,
+                        page: pagination.page - 1,
+                      });
+                    }
                   }
                 }}
               />
             </PaginationItem>
 
-            {Array.from({ length: pagination.totalPage }).map((_, index) => (
-              <PaginationItem key={index} className="cursor-pointer">
-                <PaginationLink
-                  onClick={() =>
-                    setPagination({
-                      ...pagination,
-                      page: index + 1,
-                    })
-                  }
-                  isActive={pagination.page === index + 1}
-                >
-                  {index + 1}
-                </PaginationLink>
-              </PaginationItem>
-            ))}
+            {Array.from({ length: pagination?.totalPage ?? 0 }).map(
+              (_, index) => (
+                <PaginationItem key={index} className="cursor-pointer">
+                  <PaginationLink
+                    onClick={() => {
+                      if (pagination) {
+                        setPagination?.({
+                          ...pagination,
+                          page: index + 1,
+                        });
+                      }
+                    }}
+                    isActive={pagination?.page === index + 1}
+                  >
+                    {index + 1}
+                  </PaginationLink>
+                </PaginationItem>
+              )
+            )}
 
             <PaginationItem>
               <PaginationNext
                 href="#"
                 onClick={() => {
-                  if (pagination.page < pagination.totalPage) {
-                    setPagination({
-                      ...pagination,
-                      page: pagination.page + 1,
-                    });
+                  if (pagination) {
+                    if (pagination.page < pagination.totalPage) {
+                      setPagination?.({
+                        ...pagination,
+                        page: pagination.page + 1,
+                      });
+                    }
                   }
                 }}
               />

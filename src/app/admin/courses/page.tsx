@@ -29,10 +29,20 @@ import { createCourse } from "@/http/courses/create-courses";
 import { editCourse } from "@/http/courses/edit-courses";
 import { starredCourse } from "@/http/courses/starred-courses";
 import { deleteCourse } from "@/http/courses/delete-courses";
-import TableWithPagination from "../_components/table-with-pagination";
 import FormDrawer from "../_components/formDrawer";
-import WYSIWYGEditor from "../_components/wysiwyg-editor";
 import { getCategories } from "@/http/categories/get-categories";
+import dynamic from "next/dynamic";
+
+const WYSIWYGEditor = dynamic(() => import("../_components/wysiwyg-editor"), {
+  ssr: false,
+});
+
+const TableWithPagination = dynamic(
+  () => import("../_components/table-with-pagination"),
+  {
+    ssr: false,
+  }
+);
 
 type Course = {
   id: string;

@@ -22,13 +22,6 @@ import {
   DrawerTitle,
   DrawerTrigger,
 } from "@/components/ui/drawer";
-import {
-  Select,
-  SelectContent,
-  SelectItem,
-  SelectTrigger,
-  SelectValue,
-} from "@/components/ui/select";
 import { PlusCircle, Search } from "lucide-react";
 import SideBar from "../_components/sideBar";
 import Loading from "../_components/loading";
