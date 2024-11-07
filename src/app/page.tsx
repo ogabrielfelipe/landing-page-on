@@ -1,14 +1,22 @@
 "use client";
 
 import { useEffect, useState } from "react";
-import Loading from "./admin/_components/loading";
-import Header from "@/components/header";
-import Footer from "@/components/footer";
+
 import Card from "@/components/card";
 import { getCoursesStarred } from "@/http/web/get-courses-starred";
 import { getTestimonials } from "@/http/web/get-testimonials";
-import { getCompany } from "@/http/web/get-company";
 import { Button } from "@/components/ui/button";
+
+const Header = dynamic(() => import("@/components/header"), {
+  ssr: true,
+});
+
+const Footer = dynamic(() => import("@/components/footer"), {
+  ssr: true,
+});
+
+import { Skeleton } from "@/components/ui/skeleton";
+import dynamic from "next/dynamic";
 
 type Course = {
   id: string;
@@ -30,34 +38,11 @@ type Testimonial = {
   createdAt: string;
 };
 
-type Contacts = {
-  id: string;
-  type: string;
-  content: string;
-};
-
-type Company = {
-  about: string;
-  city: string;
-  contacts: Contacts[];
-  document: string;
-  latitude: string;
-  longitude: string;
-  name: string;
-  neighborhood: string;
-  number: string;
-  state: string;
-  street: string;
-  zipCode: string;
-};
-
 export default function Home() {
   const [courses, setCourses] = useState<Array<Course> | null>();
   const [testimonials, setTestimonials] = useState<Array<Testimonial> | null>();
   const [testimonialsPaginated, setTestimonialsPaginated] =
     useState<Array<Testimonial> | null>();
-  const [company, setCompany] = useState<Company>();
-  const [isLoading, setIsLoading] = useState<boolean>(true);
 
   const [blockLoadingTestimonials, setBlockLoadingTestimonials] =
     useState<boolean>(false);
@@ -70,8 +55,6 @@ export default function Home() {
     const data = await coursesFn.json();
 
     if (coursesFn.status === 200) {
-      console.log(data.courses);
-
       setCourses(data.courses);
       return;
     } else {
@@ -98,26 +81,14 @@ export default function Home() {
     }
   };
 
-  const fetchCompany = async () => {
-    const companyFn = await getCompany();
-
-    const data = await companyFn.json();
-
-    if (companyFn.status === 200) {
-      const contacts = JSON.parse(data.company.contacts);
-      setCompany({ ...data.company, contacts });
-      return;
-    } else {
-      return;
-    }
-  };
-
   useEffect(() => {
-    setIsLoading(true);
+    const fetchData = () => {
+      Promise.all([fetchCourses(), fetchTestimonials()]).catch((error) => {
+        console.error("Error fetching data:", error);
+      });
+    };
 
-    Promise.all([fetchCourses(), fetchTestimonials(), fetchCompany()]);
-
-    setIsLoading(false);
+    fetchData();
   }, []);
 
   function abbreviateSecondName(fullName: string) {
@@ -163,7 +134,7 @@ export default function Home() {
 
   return (
     <>
-      <Header title={company?.name} image="" />
+      <Header />
 
       <main>
         <div className="m-2/3 max-m-screen m-auto overflow-hidden px-8 py-4">
@@ -171,9 +142,6 @@ export default function Home() {
             id="intro"
             className="flex flex-col items-center justify-center flex-wrap text-center gap-4"
           >
-            <h2 className="text-4xl font-bold text-blue-900">
-              Bem-vindo à {company?.name}
-            </h2>
             <p>
               Descubra seu potencial tanto musical quanto profissional com
               instrutores experientes e instalações de ponta.
@@ -197,64 +165,99 @@ export default function Home() {
             {courses ? (
               <Card contents={courses} />
             ) : (
-              <div className="text-center m-10">
-                <h1 className="text-lg font-bold text-black">
-                  Ops... Ainda não há cursos Cadastrados
-                </h1>
-                <p>Mais não se preocupe, em breve iremos informar os cursos</p>
-              </div>
+              <>
+                <div className="bg-blue-50/50 bg-opacity-50 p-4 shadow-md m-3 rounded-lg flex flex-col gap-2 cursor-pointer hover:translate-y-[-0.25rem] hover:bg-opacity-70 transition-all duration-300">
+                  <Skeleton className="w-[250px] h-10" />
+                  <Skeleton className="w-1/3 h-8" />
+                  <Skeleton className="w-full h-20" />
+                </div>
+              </>
             )}
           </section>
         </div>
 
-        <section
-          id="testimonials"
-          aria-labelledby="testimonials-titulo"
-          className="bg-blue-800 text-blue-100 px-10 w-full max-w-screen min-h-[50vh]  p-4 overflow-hidden"
-        >
-          <div className="m-2/3 max-m-screen m-auto overflow-hidden px-8 py-4">
+        {/*bg-blue-800  text-blue-100*/}
+
+        <div className="m-2/3 max-m-screen m-auto overflow-hidden px-8 py-4">
+          <section id="testimonials" aria-labelledby="testimonials-titulo">
             <h2
               id="testimonials-titulo"
-              className="text-3xl font-bold text-blue-100 border-b-2 border-[#ff9800] pb-2 mb-3"
+              className="text-3xl font-bold text-blue-900 border-b-2 border-[#ff9800] pb-2 mb-3"
             >
               Depoimentos de Alunos
             </h2>
             <div className="flex flex-wrap flex-row">
-              {testimonialsPaginated?.map((testimonial) => {
-                return (
-                  <blockquote
-                    key={testimonial.student}
-                    className="border-l-2 flex flex-col justify-center border-[#ff9800] pl-4 font-light text-blue-50 m-10 max-w-80"
-                  >
-                    <div
-                      className="text-blue-50"
-                      dangerouslySetInnerHTML={{
-                        __html: testimonial.description,
-                      }}
-                    ></div>
+              {testimonialsPaginated ? (
+                testimonialsPaginated?.map((testimonial) => {
+                  return (
+                    <blockquote
+                      key={testimonial.student}
+                      className="border-l-2 flex flex-col justify-center border-[#ff9800] pl-4 font-light text-blue-700 m-10 max-w-80"
+                    >
+                      <div
+                        className="text-blue-700"
+                        dangerouslySetInnerHTML={{
+                          __html: testimonial.description,
+                        }}
+                      ></div>
 
-                    <footer className="bg-blue-900 text-blue-50 p-2 mt-8 rounded-md font-bold text-center">
-                      -{" "}
-                      {abbreviateSecondName(testimonial.student) +
-                        ", " +
-                        testimonial.course.name}
+                      <footer className="bg-blue-900 text-blue-50 p-2 mt-8 rounded-md font-bold text-center">
+                        -{" "}
+                        {abbreviateSecondName(testimonial.student) +
+                          ", " +
+                          testimonial.course.name}
+                      </footer>
+                    </blockquote>
+                  );
+                })
+              ) : (
+                <>
+                  <blockquote className="border-l-2 flex flex-col justify-center border-[#ff9800] pl-4 font-light text-blue-50 m-10 max-w-80">
+                    <Skeleton className="h-[250px] w-52" />
+
+                    <footer className=" text-blue-50 p-2 mt-8 rounded-md font-bold text-center">
+                      <Skeleton className="h-12 w-full" />
                     </footer>
                   </blockquote>
-                );
-              })}
+
+                  <blockquote className="border-l-2 flex flex-col justify-center border-[#ff9800] pl-4 font-light text-blue-50 m-10 max-w-80">
+                    <Skeleton className="h-[250px] w-52" />
+
+                    <footer className=" text-blue-50 p-2 mt-8 rounded-md font-bold text-center">
+                      <Skeleton className="h-12 w-full" />
+                    </footer>
+                  </blockquote>
+
+                  <blockquote className="border-l-2 flex flex-col justify-center border-[#ff9800] pl-4 font-light text-blue-50 m-10 max-w-80">
+                    <Skeleton className="h-[250px] w-48" />
+
+                    <footer className=" text-blue-50 p-2 mt-8 rounded-md font-bold text-center">
+                      <Skeleton className="h-12 w-full" />
+                    </footer>
+                  </blockquote>
+
+                  <blockquote className="border-l-2 flex flex-col justify-center border-[#ff9800] pl-4 font-light text-blue-50 m-10 max-w-80">
+                    <Skeleton className="h-[250px] w-52" />
+
+                    <footer className=" text-blue-50 p-2 mt-8 rounded-md font-bold text-center">
+                      <Skeleton className="h-12 w-full" />
+                    </footer>
+                  </blockquote>
+                </>
+              )}
             </div>
 
             <div className="w-full flex justify-center">
               <Button
                 onClick={loadingTestimonials}
-                className="bg-[#ff9800] text-white"
-                disabled={blockLoadingTestimonials}
+                className="bg-[#ff9800] text-white disabled:cursor-not-allowed"
+                disabled={blockLoadingTestimonials || !testimonialsPaginated}
               >
                 Carregar mais
               </Button>
             </div>
-          </div>
-        </section>
+          </section>
+        </div>
 
         {/* <div className="m-2/3 max-m-screen m-auto overflow-hidden px-8 py-4">
           <section id="sobre" aria-labelledby="sobre-titulo">
@@ -275,8 +278,6 @@ export default function Home() {
       </main>
 
       <Footer />
-
-      {isLoading && <Loading />}
     </>
   );
 }
