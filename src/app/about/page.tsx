@@ -1,9 +1,19 @@
-"use client";
-
 import Footer from "@/components/footer";
 import Header from "@/components/header";
+import { getCompany } from "@/http/web/get-company";
 
-export default function About() {
+async function getData() {
+  const res = await getCompany();
+  if (!res.ok) {
+    throw new Error("Failed to fetch data");
+  }
+
+  return res.json();
+}
+
+export default async function About() {
+  const { company } = await getData();
+
   return (
     <>
       <Header />
@@ -21,11 +31,10 @@ export default function About() {
             Sobre nossa escola
           </h2>
 
-          <p className="m-3 text-black opacity-90">
-            O Instituto de Ensino Eduardo Meotte é dedicado a nutrir talentos
-            musicais há mais de 20 anos. Nossa missão é proporcionar educação
-            musical de alta qualidade em um ambiente inspirador e colaborativo.
-          </p>
+          <div
+            className="m-3 text-black opacity-90"
+            dangerouslySetInnerHTML={{ __html: company?.about || "" }}
+          ></div>
         </section>
       </main>
       <Footer />

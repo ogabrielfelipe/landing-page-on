@@ -11,8 +11,6 @@ export async function PUT(request: Request) {
   const id = url.pathname.split("/").pop();
   const body = await request.json();
 
-  console.log(body);
-
   const bodyValidated = companyEditSchema.safeParse(body);
 
   if (!bodyValidated.success) {

@@ -180,14 +180,10 @@ export default function CategoriesManager() {
   };
 
   const handleActiveOrInactiveCategory = async (id: string) => {
-    console.log(id);
-
     setIsLoading(true);
     const categoryFound = categories.find((category) => category.id === id);
 
     const response = await activeCategory({ id });
-
-    console.log(response);
 
     if (response.status === 200) {
       toast({

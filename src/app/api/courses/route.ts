@@ -64,8 +64,6 @@ async function createCourses(data: CreateCoursesRequest) {
 }
 
 async function getCourses(props: GetCoursesRequest) {
-  console.log(props);
-
   const { page, perPage, ...search } = props;
 
   const courses = await prisma.course.findMany({

@@ -1,39 +1,19 @@
-"use client";
-
-import { fetchCourses } from "@/actions/fetch-courses";
 import Footer from "@/components/footer";
 import Header from "@/components/header";
-import { useEffect, useState } from "react";
-import Loading from "../admin/_components/loading";
 import Card from "@/components/card";
+import { getCourses } from "@/http/web/get-courses";
 
-type Course = {
-  id: string;
-  name: string;
-  description: string;
-  image: string;
-  level: string;
-  duration: number;
-  instructor: string;
-};
+async function getData() {
+  const res = await getCourses();
+  if (!res.ok) {
+    throw new Error("Failed to fetch data");
+  }
 
-export default function Courses() {
-  const [courses, setCourses] = useState<Array<Course> | null>();
-  const [isLoading, setIsLoading] = useState<boolean>(true);
+  return res.json();
+}
 
-  const fetchCourse = async () => {
-    const { courses } = await fetchCourses();
-    setCourses(courses);
-  };
-
-  useEffect(() => {
-    setIsLoading(true);
-
-    fetchCourse();
-
-    setIsLoading(false);
-  }, []);
-
+export default async function Courses() {
+  const { courses } = await getData();
   return (
     <>
       <Header />
@@ -64,8 +44,6 @@ export default function Courses() {
         </section>
       </main>
       <Footer />
-
-      {isLoading && <Loading />}
     </>
   );
 }
