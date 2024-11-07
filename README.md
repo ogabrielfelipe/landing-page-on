@@ -26,6 +26,10 @@ This project is a dynamic landing page system with an integrated administrative 
 
 1. Clone the repository
 2. Install dependencies: `npm install`
-3. Set up environment variables (details in `.env.example`)
-4. Run the development server: `npm run dev`
-5. Open `http://localhost:3000` in your browser
+3. Create environment variables according to the .env.example
+4. Container installation, if in a development environment:
+   1. Install dotenv-cli: `npm install -g dotenv-cli`
+   2. Grant permission on the clear-database file: `chmod +x clear-database.sh`
+   3. Run the clear_database: `./clear-database.sh`
+5. Run the development server: `npm run dev`
+6. Open `http://localhost:3000` in your browser

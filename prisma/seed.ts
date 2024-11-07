@@ -1,18 +1,42 @@
+import { z } from "zod";
 import { PrismaClient } from "@prisma/client";
 import { hash } from "bcryptjs";
 
 const prisma = new PrismaClient();
 
+const _env = z.object({
+  NODE_ENV: z
+    .enum(["development", "test", "production"])
+    .default("development"),
+  NAME_LANDING_PAGE_ON: z.string().min(1),
+  EMAIL_LANDING_PAGE_ON: z.string().email(),
+  PASSWORD_LANDING_PAGE_ON: z.string().min(6),
+});
+
 async function main() {
-  const password = await hash("password123", 12);
+  const validatedEnv = _env.safeParse(process.env);
+
+  if (!validatedEnv.success) {
+    throw new Error("Invalid env");
+  }
+
+  const env = validatedEnv.data;
+
+  const NAME_ENV = env.NAME_LANDING_PAGE_ON;
+  const EMAIL_ENV = env.EMAIL_LANDING_PAGE_ON;
+  const PASSWORD_ENV = env.PASSWORD_LANDING_PAGE_ON;
+
+  // console.log(environment);
+
+  const password = await hash(PASSWORD_ENV, 12);
 
   Promise.all([
     await prisma.user.upsert({
-      where: { email: "admin@admin.com" },
+      where: { email: EMAIL_ENV },
       update: {},
       create: {
-        email: "admin@admin.com",
-        name: "Admin",
+        email: EMAIL_ENV,
+        name: NAME_ENV,
         password,
       },
     }),
