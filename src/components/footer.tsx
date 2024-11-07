@@ -3,8 +3,7 @@ import {
   InstagramLogo,
   WhatsappLogo,
   YoutubeLogo,
-} from "@phosphor-icons/react";
-import { useEffect, useState } from "react";
+} from "@phosphor-icons/react/dist/ssr";
 
 type Contacts = {
   id: string;
@@ -12,41 +11,25 @@ type Contacts = {
   content: string;
 };
 
-type Company = {
-  about: string;
-  city: string;
-  contacts: Contacts[];
-  document: string;
-  latitude: string;
-  longitude: string;
-  name: string;
-  neighborhood: string;
-  number: string;
-  state: string;
-  street: string;
-  zipCode: string;
-};
+async function getData() {
+  const res = await getCompany();
+  if (!res.ok) {
+    throw new Error("Failed to fetch data");
+  }
 
-export default function Footer() {
-  const [company, setCompany] = useState<Company>();
+  const data = await res.json();
+  const company = data.company;
 
-  const fetchCompany = async () => {
-    const companyFn = await getCompany();
-
-    const data = await companyFn.json();
-
-    if (companyFn.status === 200) {
-      const contacts = JSON.parse(data.company.contacts);
-      setCompany({ ...data.company, contacts });
-      return;
-    } else {
-      return;
-    }
+  const companyWithContacts = {
+    ...company,
+    contacts: JSON.parse(company.contacts),
   };
 
-  useEffect(() => {
-    Promise.all([fetchCompany()]);
-  }, []);
+  return companyWithContacts;
+}
+
+export default async function Footer() {
+  const company = await getData();
 
   return (
     <footer className="bg-blue-900 text-blue-100">
@@ -80,20 +63,24 @@ export default function Footer() {
                 company?.zipCode}
             </p>
             <p className="text-sm">
-              {company?.contacts.find((contact) => contact.type === "mail")
-                ?.content
+              {company?.contacts.find(
+                (contact: Contacts) => contact.type === "mail"
+              )?.content
                 ? `E-mail: ${
-                    company.contacts.find((contact) => contact.type === "mail")
-                      ?.content
+                    company.contacts.find(
+                      (contact: Contacts) => contact.type === "mail"
+                    )?.content
                   }`
                 : "E-mail não cadastrado"}
             </p>
             <p className="text-sm">
-              {company?.contacts.find((contact) => contact.type === "phone")
-                ?.content
+              {company?.contacts.find(
+                (contact: Contacts) => contact.type === "phone"
+              )?.content
                 ? `Telefone: ${
-                    company.contacts.find((contact) => contact.type === "phone")
-                      ?.content
+                    company.contacts.find(
+                      (contact: Contacts) => contact.type === "phone"
+                    )?.content
                   }`
                 : "Telefone não cadastrado"}
             </p>
@@ -106,12 +93,12 @@ export default function Footer() {
                 className="text-blue-300 hover:text-white transition-colors"
               >
                 {company?.contacts.find(
-                  (contact) => contact.type === "instagram"
+                  (contact: Contacts) => contact.type === "instagram"
                 )?.content ? (
                   <a
                     href={`https://www.instagram.com/${
                       company.contacts.find(
-                        (contact) => contact.type === "instagram"
+                        (contact: Contacts) => contact.type === "instagram"
                       )?.content
                     }`}
                   >
@@ -127,12 +114,12 @@ export default function Footer() {
                 className="text-blue-300 hover:text-white transition-colors"
               >
                 {company?.contacts.find(
-                  (contact) => contact.type === "whatsapp"
+                  (contact: Contacts) => contact.type === "whatsapp"
                 )?.content ? (
                   <a
                     href={`https://wa.me/+55${
                       company.contacts.find(
-                        (contact) => contact.type === "whatsapp"
+                        (contact: Contacts) => contact.type === "whatsapp"
                       )?.content
                     }`}
                   >
@@ -148,12 +135,13 @@ export default function Footer() {
                 href="#"
                 className="text-blue-300 hover:text-white transition-colors"
               >
-                {company?.contacts.find((contact) => contact.type === "youtube")
-                  ?.content ? (
+                {company?.contacts.find(
+                  (contact: Contacts) => contact.type === "youtube"
+                )?.content ? (
                   <a
                     href={`https://www.youtube.com/${
                       company.contacts.find(
-                        (contact) => contact.type === "youtube"
+                        (contact: Contacts) => contact.type === "youtube"
                       )?.content
                     }`}
                   >
