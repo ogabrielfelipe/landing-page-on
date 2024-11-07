@@ -6,7 +6,6 @@ import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Layers, LucideProps, MessageSquareText } from "lucide-react";
 import SideBar from "./_components/sideBar";
 import { useSession } from "next-auth/react";
-import Loading from "./_components/loading";
 import HeaderAdmin from "./_components/header";
 import {
   ForwardRefExoticComponent,
@@ -20,6 +19,7 @@ import { getCourses } from "@/http/courses/get-courses";
 import TableWithPagination from "./_components/table-with-pagination";
 import Link from "next/link";
 import { getTotals } from "@/http/dashboard/getTotals";
+import { Skeleton } from "@/components/ui/skeleton";
 
 type Course = {
   id: string;
@@ -40,10 +40,10 @@ type Totals = {
 };
 
 export default function AdminDashboard() {
+  // eslint-disable-next-line @typescript-eslint/no-unused-vars
   const { status } = useSession({
     required: true,
   });
-  const [isLoading, setIsLoading] = useState(false);
 
   const [courses, setCourses] = useState<Course[]>([]);
   const [totals, setTotals] = useState<Totals>();
@@ -58,6 +58,8 @@ export default function AdminDashboard() {
 
     const courses = data.courses;
 
+    console.log(courses);
+
     setCourses(courses);
   }, []);
 
@@ -70,13 +72,8 @@ export default function AdminDashboard() {
   };
 
   useEffect(() => {
-    setIsLoading(true);
     Promise.all([fetchTotals(), fetchCourses()]);
-
-    setIsLoading(false);
   }, [fetchCourses]);
-
-  if (status === "loading") return <Loading />;
 
   return (
     <div className="flex h-screen bg-gray-100">
@@ -121,20 +118,24 @@ export default function AdminDashboard() {
                     <Link href="/admin/courses">Ver todos</Link>
                   </Button>
                 </div>
-                <TableWithPagination
-                  contents={courses}
-                  headers={[
-                    { key: "name", value: "Nome" },
-                    { key: "shortDescription", value: "Resumo" },
-                    { key: "instructor", value: "Instrutor" },
-                  ]}
-                  handleDelete={() => {}}
-                  handleEdit={() => {}}
-                  isLoading={isLoading}
-                  isActions={false}
-                  starred={false}
-                  isPagination={false}
-                />
+                {courses.length != 0 ? (
+                  <TableWithPagination
+                    contents={courses}
+                    headers={[
+                      { key: "name", value: "Nome" },
+                      { key: "shortDescription", value: "Resumo" },
+                      { key: "instructor", value: "Instrutor" },
+                    ]}
+                    handleDelete={() => {}}
+                    handleEdit={() => {}}
+                    isLoading={false}
+                    isActions={false}
+                    starred={false}
+                    isPagination={false}
+                  />
+                ) : (
+                  <Skeleton className="w-full h-20" />
+                )}
               </CardContent>
             </Card>
           </div>
@@ -162,7 +163,13 @@ function StatCard({ title, value, icon }: statProps) {
         {icon}
       </CardHeader>
       <CardContent>
-        <div className="text-2xl font-bold">{value}</div>
+        <div className="text-2xl font-bold">
+          {value === "undefined" ? (
+            <Skeleton className="w-[50px] h-10" />
+          ) : (
+            value
+          )}
+        </div>
       </CardContent>
     </Card>
   );
