@@ -22,7 +22,7 @@ export default async function About() {
         <section
           id="abouts"
           aria-labelledby="about-titulo"
-          className="m-2/3 max-m-screen m-auto overflow-hidden px-8 py-4"
+          className="m-2/3 h-screen max-m-screen m-auto overflow-hidden px-8 py-4"
         >
           <h2
             id="about-titulo"
