@@ -1,189 +1,278 @@
 "use client";
 
-import { useState } from "react";
+import { useCallback, useEffect, useState } from "react";
+import Head from "next/head";
+
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
-import {
-  Table,
-  TableBody,
-  TableCell,
-  TableHead,
-  TableHeader,
-  TableRow,
-} from "@/components/ui/table";
-import {
-  Drawer,
-  DrawerClose,
-  DrawerContent,
-  DrawerDescription,
-  DrawerFooter,
-  DrawerHeader,
-  DrawerTitle,
-  DrawerTrigger,
-} from "@/components/ui/drawer";
-import { PlusCircle, Search } from "lucide-react";
+
+import { DrawerClose, DrawerFooter } from "@/components/ui/drawer";
+
+import { PlusCircle } from "lucide-react";
 import SideBar from "../_components/sideBar";
 import Loading from "../_components/loading";
 import { useSession } from "next-auth/react";
 import HeaderAdmin from "../_components/header";
 
-// Mock data for users
-const initialUsers = [
-  { id: 1, name: "John Doe", email: "john@example.com", role: "Admin" },
-  { id: 2, name: "Jane Smith", email: "jane@example.com", role: "User" },
-  { id: 3, name: "Bob Johnson", email: "bob@example.com", role: "User" },
-  { id: 4, name: "Alice Brown", email: "alice@example.com", role: "Editor" },
-];
+import { toast } from "@/hooks/use-toast";
+import TableWithPagination from "../_components/table-with-pagination";
+import FormDrawer from "../_components/formDrawer";
+import { getUsers } from "@/http/users/get-users";
+import { editUser } from "@/http/users/edit-users";
+import { createUser } from "@/http/users/create-users";
+import { deleteUser } from "@/http/users/delete-users";
 
-export default function UserManagement() {
-  const [users, setUsers] = useState(initialUsers);
-  const [searchTerm, setSearchTerm] = useState("");
-  const [newUser, setNewUser] = useState({ name: "", email: "", role: "" });
-  const [drawerOpen, setDrawerOpen] = useState(false);
+type UserProps = {
+  id?: string;
+  name: string;
+  email: string;
+  password?: string;
+};
 
-  const filteredUsers = users.filter(
-    (user) =>
-      user.name.toLowerCase().includes(searchTerm.toLowerCase()) ||
-      user.email.toLowerCase().includes(searchTerm.toLowerCase())
-  );
-
-  const handleAddUser = (e: React.FormEvent) => {
-    e.preventDefault();
-    setUsers([...users, { ...newUser, id: users.length + 1 }]);
-    setNewUser({ name: "", email: "", role: "" });
-    setDrawerOpen(false);
-  };
-
+export default function UsersManager() {
   const { status } = useSession({
     required: true,
   });
 
+  const [users, setUsers] = useState<UserProps[]>([]);
+
+  const [newUser, setNewUser] = useState<UserProps>({
+    id: "",
+    name: "",
+    email: "",
+    password: "",
+  });
+  const [drawerOpen, setDrawerOpen] = useState(false);
+  const [isLoading, setIsLoading] = useState(true);
+
+  const fetchUsers = useCallback(async () => {
+    const UsersFn = await getUsers();
+
+    const data = await UsersFn.json();
+
+    const usersQueue: UserProps[] = data.users;
+
+    if (UsersFn.status === 200) {
+      setUsers(usersQueue);
+      setIsLoading(false);
+
+      return;
+    } else {
+      toast({
+        title: "Erro ao buscar Usuários",
+        description: "Ocorreu um erro ao buscar os usuários",
+      });
+      setIsLoading(false);
+    }
+  }, []);
+
+  useEffect(() => {
+    setIsLoading(true);
+    Promise.all([fetchUsers()]);
+  }, [fetchUsers]);
+
   if (status === "loading") return <Loading />;
 
+  const handleAddUser = async (e: React.FormEvent) => {
+    e.preventDefault();
+    setIsLoading(true);
+
+    let response;
+    if (newUser.id) {
+      const editedUser = {
+        id: newUser.id,
+        name: newUser.name,
+        email: newUser.email,
+        password: newUser.password,
+      };
+      response = await editUser(editedUser);
+
+      if (response.status === 200) {
+        toast({
+          title: "Usuário atualizado com sucesso",
+          description: "A usuário foi atualizado com sucesso",
+        });
+      }
+    } else {
+      if (!newUser.password) {
+        toast({
+          title: "Senha é obrigatória",
+          description: "A senha é obrigatória para criar um usuário",
+        });
+        return;
+      }
+
+      response = await createUser({
+        ...newUser,
+        password: newUser.password as string,
+      });
+
+      if (response.status === 201) {
+        toast({
+          title: "Usuário criado com sucesso",
+          description: "O usuário foi criado com sucesso",
+        });
+      }
+    }
+
+    await fetchUsers();
+
+    setIsLoading(false);
+    setDrawerOpen(false);
+
+    setNewUser({
+      id: "",
+      name: "",
+      email: "",
+      password: "",
+    });
+  };
+
+  const selectUserForEdit = async (id: string) => {
+    const userFound = users.find((user) => user.id === id);
+
+    if (userFound) {
+      setNewUser(userFound);
+    }
+
+    setDrawerOpen(true);
+  };
+
+  const handleDeleteUser = async (id: string) => {
+    setIsLoading(true);
+
+    const response = await deleteUser({ id });
+
+    setDrawerOpen(false);
+    if (response.status === 200) {
+      toast({
+        title: "Usuário deletado com sucesso",
+        description: "A usuário foi deletado com sucesso",
+      });
+    }
+
+    await fetchUsers();
+
+    setIsLoading(false);
+  };
+
+  const handleClickNewUser = () => {
+    setNewUser({
+      id: "",
+      name: "",
+      email: "",
+      password: "",
+    });
+    setDrawerOpen(true);
+  };
+
   return (
-    <div className="flex h-screen bg-gray-100">
-      <SideBar />
+    <>
+      <Head>
+        <title>Users - LandingPage.On</title>
+      </Head>
 
-      <div className="flex-1 flex flex-col overflow-hidden gap-4">
-        <HeaderAdmin title="User Management" />
+      <div className="flex h-screen bg-gray-100">
+        <SideBar />
+        <div className="flex-1 flex flex-col overflow-hidden gap-4">
+          <HeaderAdmin title="Cadastro de Usuários" />
 
-        <div className="flex justify-between items-center mb-4 mx-5">
-          <div className="relative">
-            <Search className="absolute left-2 top-2.5 h-4 w-4 text-muted-foreground" />
-            <Input
-              placeholder="Search users..."
-              value={searchTerm}
-              onChange={(e) => setSearchTerm(e.target.value)}
-              className="pl-8 w-64"
-            />
-          </div>
-          <Drawer
-            open={drawerOpen}
-            direction="right"
-            onOpenChange={setDrawerOpen}
-          >
-            <DrawerTrigger asChild>
-              <Button>
-                <PlusCircle className="mr-2 h-4 w-4" />
-                Novo Usuário
-              </Button>
-            </DrawerTrigger>
-            <DrawerContent className="min-h-screen w-[480px]">
-              <DrawerHeader>
-                <DrawerTitle>Adicionar Novo Usuário</DrawerTitle>
-                <DrawerDescription>
-                  Informe os dados de um novo usuário.
-                </DrawerDescription>
-              </DrawerHeader>
+          <div className="flex justify-between items-center mb-4 mx-5">
+            <Button onClick={handleClickNewUser}>
+              <PlusCircle className="mr-2 h-4 w-4" />
+              Novo usuário
+            </Button>
+
+            <FormDrawer
+              drawerOpen={drawerOpen}
+              setDrawerOpen={setDrawerOpen}
+              title="Adicionar Novo Usuário"
+              description="Informe os dados da novo usuário."
+            >
               <form onSubmit={handleAddUser} className="px-4">
                 <div className="grid gap-4 py-4">
                   <div className="grid grid-cols-4 items-center gap-4">
                     <Label htmlFor="name" className="text-right">
-                      Nome
+                      Nome:
                     </Label>
                     <Input
                       id="name"
                       value={newUser.name}
                       onChange={(e) =>
-                        setNewUser({ ...newUser, name: e.target.value })
+                        setNewUser({
+                          ...newUser,
+                          name: e.target.value,
+                        })
                       }
                       className="col-span-3"
                     />
                   </div>
+
                   <div className="grid grid-cols-4 items-center gap-4">
                     <Label htmlFor="email" className="text-right">
-                      Email
+                      Email:
                     </Label>
                     <Input
                       id="email"
                       type="email"
                       value={newUser.email}
                       onChange={(e) =>
-                        setNewUser({ ...newUser, email: e.target.value })
+                        setNewUser({
+                          ...newUser,
+                          email: e.target.value,
+                        })
                       }
                       className="col-span-3"
                     />
                   </div>
-                  {/* <div className="grid grid-cols-4 items-center gap-4">
-                    <Label htmlFor="role" className="text-right">
-                      Role
+
+                  <div className="grid grid-cols-4 items-center gap-4">
+                    <Label htmlFor="password" className="text-right">
+                      Senha:
                     </Label>
-                    <Select
-                      value={newUser.role}
-                      onValueChange={(value) =>
-                        setNewUser({ ...newUser, role: value })
+                    <Input
+                      id="password"
+                      type="password"
+                      value={newUser.password}
+                      onChange={(e) =>
+                        setNewUser({
+                          ...newUser,
+                          password: e.target.value,
+                        })
                       }
-                    >
-                      <SelectTrigger className="col-span-3">
-                        <SelectValue placeholder="Select a role" />
-                      </SelectTrigger>
-                      <SelectContent>
-                        <SelectItem value="Admin">Admin</SelectItem>
-                        <SelectItem value="User">User</SelectItem>
-                        <SelectItem value="Editor">Editor</SelectItem>
-                      </SelectContent>
-                    </Select>
-                  </div> */}
+                      className="col-span-3"
+                    />
+                  </div>
                 </div>
                 <DrawerFooter>
-                  <Button type="submit">Salvar</Button>
+                  <Button type="submit" disabled={isLoading}>
+                    {isLoading ? "Salvando..." : "Salvar"}
+                  </Button>
                   <DrawerClose asChild>
                     <Button variant="outline">Cancelar</Button>
                   </DrawerClose>
                 </DrawerFooter>
               </form>
-            </DrawerContent>
-          </Drawer>
+            </FormDrawer>
+          </div>
+          <TableWithPagination
+            contents={users}
+            headers={[
+              { key: "name", value: "Nome" },
+              { key: "email", value: "E-mail" },
+            ]}
+            handleDelete={handleDeleteUser}
+            handleEdit={selectUserForEdit}
+            isLoading={isLoading}
+            isActions={true}
+            starred={false}
+            isActionActive={false}
+          />
         </div>
-        <Table>
-          <TableHeader>
-            <TableRow>
-              <TableHead>Nome</TableHead>
-              <TableHead>Email</TableHead>
-              {/* <TableHead>Role</TableHead> */}
-              <TableHead>Ações</TableHead>
-            </TableRow>
-          </TableHeader>
-          <TableBody>
-            {filteredUsers.map((user) => (
-              <TableRow key={user.id}>
-                <TableCell>{user.name}</TableCell>
-                <TableCell>{user.email}</TableCell>
-                {/* <TableCell>{user.role}</TableCell> */}
-                <TableCell>
-                  <Button variant="ghost" size="sm">
-                    Edit
-                  </Button>
-                  <Button variant="ghost" size="sm" className="text-red-600">
-                    Delete
-                  </Button>
-                </TableCell>
-              </TableRow>
-            ))}
-          </TableBody>
-        </Table>
       </div>
-    </div>
+
+      {isLoading && <Loading />}
+    </>
   );
 }
