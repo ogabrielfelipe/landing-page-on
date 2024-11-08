@@ -109,6 +109,7 @@ async function createUsers({ name, email, password }: userRequest) {
 async function getUsers() {
   const users = prisma.user.findMany({
     select: {
+      id: true,
       name: true,
       email: true,
     },
