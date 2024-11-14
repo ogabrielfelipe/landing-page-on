@@ -30,7 +30,7 @@ enum LevelCourse {
 
 model Course {
   id            String @id @default(uuid())
-  name          String @unique
+  name          String 
   shortDescription String 
   description   String @db.VarChar(2048)
   image         String
