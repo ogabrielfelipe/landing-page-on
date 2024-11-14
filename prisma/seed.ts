@@ -62,8 +62,10 @@ async function main() {
       },
     }),
 
-    await prisma.course.create({
-      data: {
+    await prisma.course.upsert({
+      where: { name: "Técnico em Informática" },
+      update: {},
+      create: {
         name: "Técnico em Informática",
         shortDescription:
           "O curso de informática tem como objetivo capacitar os alunos a utilizarem ferramentas e recursos tecnológicos de forma eficiente, promovendo habilidades práticas e teóricas que são essenciais no mercado de trabalho atual.",
@@ -82,8 +84,10 @@ async function main() {
       },
     }),
 
-    await prisma.course.create({
-      data: {
+    await prisma.course.upsert({
+      where: { name: "Curso de Gutarra I" },
+      update: {},
+      create: {
         name: "Curso de Gutarra I",
         shortDescription:
           "O curso de Guitarra I tem como objetivo introduzir os alunos ao mundo da guitarra, proporcionando uma base sólida em técnicas, teoria musical e prática instrumental. Os alunos aprenderão a tocar suas primeiras músicas e desenvolver habilidades que os prepararão para avançar em seu aprendizado musical.",
