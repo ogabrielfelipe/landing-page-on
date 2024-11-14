@@ -41,8 +41,12 @@ async function main() {
       },
     }),
 
-    await prisma.company.create({
-      data: {
+    await prisma.company.upsert({
+      where: {
+        document: "12345678000190",
+      },
+      update: {},
+      create: {
         name: "Tech Solutions Ltda",
         about:
           "A Tech Solutions é uma empresa especializada em desenvolvimento de software e soluções tecnológicas inovadoras, focada em atender as necessidades de nossos clientes com excelência.",
