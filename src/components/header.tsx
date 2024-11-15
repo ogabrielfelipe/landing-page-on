@@ -2,6 +2,13 @@ import { getCompany } from "@/http/web/get-company";
 import Image from "next/image";
 
 async function getData() {
+  if (process.env.NEXT_PUBLIC_SKIP_FETCH_ERRORS) {
+    const company = {
+      name: "",
+    };
+    return company;
+  }
+
   const res = await getCompany();
   if (!res.ok) {
     throw new Error("Failed to fetch data");

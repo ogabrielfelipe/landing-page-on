@@ -1,19 +1,30 @@
+"use client";
+
+import { useState } from "react";
 import Footer from "@/components/footer";
+import { useEffect } from "react";
 import Header from "@/components/header";
 import Card from "@/components/card";
 import { getCourses } from "@/http/web/get-courses";
 
-async function getData() {
-  const res = await getCourses();
-  if (!res.ok) {
-    throw new Error("Failed to fetch data");
-  }
+export default function Courses() {
+  const [courses, setCourses] = useState<Record<string, string | number>[]>(
+    Array<Record<string, string | number>>()
+  );
 
-  return res.json();
-}
+  useEffect(() => {
+    const fetchData = async () => {
+      try {
+        const res = await getCourses();
+        const { courses } = await res.json();
+        setCourses(courses);
+      } catch (error) {
+        console.error("Erro ao buscar dados no client:", error);
+      }
+    };
+    fetchData();
+  }, []);
 
-export default async function Courses() {
-  const { courses } = await getData();
   return (
     <>
       <Header />
@@ -31,7 +42,7 @@ export default async function Courses() {
             Nossos Cursos em Destaque
           </h2>
 
-          {courses ? (
+          {courses.length > 0 ? (
             <Card contents={courses} />
           ) : (
             <div className="text-center m-10">

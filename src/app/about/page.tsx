@@ -1,18 +1,40 @@
+"use client";
+
 import Footer from "@/components/footer";
 import Header from "@/components/header";
 import { getCompany } from "@/http/web/get-company";
+import { useEffect, useState } from "react";
 
-async function getData() {
-  const res = await getCompany();
-  if (!res.ok) {
-    throw new Error("Failed to fetch data");
-  }
-
-  return res.json();
+interface company {
+  name: string;
+  document: string;
+  about: string;
+  contacts: string;
+  street: string;
+  number: string;
+  neighborhood: string;
+  city: string;
+  state: string;
+  zipCode: string;
+  latitude: string;
+  longitude: string;
 }
 
-export default async function About() {
-  const { company } = await getData();
+export default function About() {
+  const [company, setCompany] = useState<company>();
+
+  useEffect(() => {
+    const fetchData = async () => {
+      try {
+        const res = await getCompany();
+        const { company } = await res.json();
+        setCompany(company);
+      } catch (error) {
+        console.error("Erro ao buscar dados no cliente:", error);
+      }
+    };
+    fetchData();
+  }, []);
 
   return (
     <>

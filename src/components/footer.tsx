@@ -12,6 +12,25 @@ type Contacts = {
 };
 
 async function getData() {
+  if (process.env.NEXT_PUBLIC_SKIP_FETCH_ERRORS) {
+    return {
+      company: {
+        name: "",
+        document: "",
+        about: "",
+        contacts: "",
+        street: "",
+        number: "",
+        neighborhood: "",
+        city: "",
+        state: "",
+        zipCode: "",
+        latitude: "",
+        longitude: "",
+      },
+    };
+  }
+
   const res = await getCompany();
   if (!res.ok) {
     throw new Error("Failed to fetch data");
@@ -63,22 +82,22 @@ export default async function Footer() {
                 company?.zipCode}
             </p>
             <p className="text-sm">
-              {company?.contacts.find(
+              {company?.contacts?.find(
                 (contact: Contacts) => contact.type === "mail"
               )?.content
                 ? `E-mail: ${
-                    company.contacts.find(
+                    company.contacts?.find(
                       (contact: Contacts) => contact.type === "mail"
                     )?.content
                   }`
                 : "E-mail não cadastrado"}
             </p>
             <p className="text-sm">
-              {company?.contacts.find(
+              {company?.contacts?.find(
                 (contact: Contacts) => contact.type === "phone"
               )?.content
                 ? `Telefone: ${
-                    company.contacts.find(
+                    company.contacts?.find(
                       (contact: Contacts) => contact.type === "phone"
                     )?.content
                   }`
@@ -92,12 +111,12 @@ export default async function Footer() {
                 href="#"
                 className="text-blue-300 hover:text-white transition-colors"
               >
-                {company?.contacts.find(
+                {company?.contacts?.find(
                   (contact: Contacts) => contact.type === "instagram"
                 )?.content ? (
                   <a
                     href={`https://www.instagram.com/${
-                      company.contacts.find(
+                      company.contacts?.find(
                         (contact: Contacts) => contact.type === "instagram"
                       )?.content
                     }`}
@@ -113,12 +132,12 @@ export default async function Footer() {
                 href="#"
                 className="text-blue-300 hover:text-white transition-colors"
               >
-                {company?.contacts.find(
+                {company?.contacts?.find(
                   (contact: Contacts) => contact.type === "whatsapp"
                 )?.content ? (
                   <a
                     href={`https://wa.me/+55${
-                      company.contacts.find(
+                      company.contacts?.find(
                         (contact: Contacts) => contact.type === "whatsapp"
                       )?.content
                     }`}
@@ -135,12 +154,12 @@ export default async function Footer() {
                 href="#"
                 className="text-blue-300 hover:text-white transition-colors"
               >
-                {company?.contacts.find(
+                {company?.contacts?.find(
                   (contact: Contacts) => contact.type === "youtube"
                 )?.content ? (
                   <a
                     href={`https://www.youtube.com/${
-                      company.contacts.find(
+                      company.contacts?.find(
                         (contact: Contacts) => contact.type === "youtube"
                       )?.content
                     }`}
