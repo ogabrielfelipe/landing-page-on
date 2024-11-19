@@ -68,7 +68,7 @@ export default function About() {
             id="about-titulo"
             className="text-3xl font-bold text-blue-900 border-b-2 border-[#ff9800] pb-2 mb-3"
           >
-            Sobre nossa escola
+            Sobre nossa Instituição
           </h2>
 
           <div

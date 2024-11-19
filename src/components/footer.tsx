@@ -162,11 +162,11 @@ const Footer = ({ company }: FooterProps) => {
           <p>
             Desenvolvido por:{" "}
             <a
-              href="https://portfolio-ogabrielfelipe.netlify.app/"
+              href="https://gafvi.com.br/"
               target="_blank"
               className="text-blue-100"
             >
-              ogabrielfelipe
+              Gabriel Felipe
             </a>
             .
           </p>
