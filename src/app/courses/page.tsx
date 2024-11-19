@@ -6,28 +6,82 @@ import { useEffect } from "react";
 import Header from "@/components/header";
 import Card from "@/components/card";
 import { getCourses } from "@/http/web/get-courses";
+import { getCompany } from "@/http/web/get-company";
+import { Skeleton } from "@/components/ui/skeleton";
+
+type Course = {
+  id: string;
+  name: string;
+  description: string;
+  image: string;
+  duration: number;
+  level: string;
+  instructor: string;
+};
+
+type Contacts = {
+  id: string;
+  type: string;
+  content: string;
+};
+
+type Company = {
+  name: string;
+  document: string;
+  about: string;
+  contacts: Contacts[];
+  street: string;
+  number: string;
+  neighborhood: string;
+  city: string;
+  state: string;
+  zipCode: string;
+  latitude: string;
+  longitude: string;
+};
 
 export default function Courses() {
-  const [courses, setCourses] = useState<Record<string, string | number>[]>(
-    Array<Record<string, string | number>>()
-  );
+  const [courses, setCourses] = useState<Array<Course> | null>();
+  const [company, setCompany] = useState<Company | null>(null);
+
+  const fetchCourses = async () => {
+    try {
+      const res = await getCourses();
+      const { courses } = await res.json();
+      setCourses(courses);
+    } catch (error) {
+      console.error("Erro ao buscar dados no client:", error);
+    }
+  };
+
+  const fetchCompany = async () => {
+    const res = await getCompany();
+    const companyData = await res.json();
+
+    let company: Company | null = null;
+
+    if (!companyData.company || typeof companyData.company !== "object") {
+      company = null;
+    }
+
+    company = {
+      ...companyData.company,
+      contacts:
+        typeof companyData.company.contacts === "string"
+          ? JSON.parse(companyData.company.contacts)
+          : companyData.company.contacts,
+    };
+
+    setCompany(company);
+  };
 
   useEffect(() => {
-    const fetchData = async () => {
-      try {
-        const res = await getCourses();
-        const { courses } = await res.json();
-        setCourses(courses);
-      } catch (error) {
-        console.error("Erro ao buscar dados no client:", error);
-      }
-    };
-    fetchData();
+    Promise.all([fetchCourses(), fetchCompany()]);
   }, []);
 
   return (
     <>
-      <Header />
+      <Header company={company} />
 
       <main>
         <section
@@ -39,22 +93,35 @@ export default function Courses() {
             id="cursos-titulo"
             className="text-3xl font-bold text-blue-900 border-b-2 border-[#ff9800] pb-2 mb-3"
           >
-            Nossos Cursos em Destaque
+            Nossos Cursos
           </h2>
 
-          {courses.length > 0 ? (
+          {courses ? (
             <Card contents={courses} />
           ) : (
-            <div className="text-center m-10">
-              <h1 className="text-lg font-bold text-black">
-                Ops... Ainda não há cursos Cadastrados
-              </h1>
-              <p>Mais não se preocupe, em breve iremos informar os cursos</p>
-            </div>
+            <>
+              <div className="bg-blue-50/50 bg-opacity-50 p-4 shadow-md m-3 rounded-lg flex flex-col gap-2 cursor-pointer hover:translate-y-[-0.25rem] hover:bg-opacity-70 transition-all duration-300">
+                <Skeleton className="w-[250px] h-10" />
+                <Skeleton className="w-1/3 h-8" />
+                <Skeleton className="w-full h-20" />
+              </div>
+
+              <div className="bg-blue-50/50 bg-opacity-50 p-4 shadow-md m-3 rounded-lg flex flex-col gap-2 cursor-pointer hover:translate-y-[-0.25rem] hover:bg-opacity-70 transition-all duration-300">
+                <Skeleton className="w-[250px] h-10" />
+                <Skeleton className="w-1/3 h-8" />
+                <Skeleton className="w-full h-20" />
+              </div>
+
+              <div className="bg-blue-50/50 bg-opacity-50 p-4 shadow-md m-3 rounded-lg flex flex-col gap-2 cursor-pointer hover:translate-y-[-0.25rem] hover:bg-opacity-70 transition-all duration-300">
+                <Skeleton className="w-[250px] h-10" />
+                <Skeleton className="w-1/3 h-8" />
+                <Skeleton className="w-full h-20" />
+              </div>
+            </>
           )}
         </section>
       </main>
-      <Footer />
+      <Footer company={company} />
     </>
   );
 }

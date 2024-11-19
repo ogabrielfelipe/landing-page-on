@@ -1,33 +1,31 @@
-import { getCompany } from "@/http/web/get-company";
 import Image from "next/image";
 
-async function getData() {
-  if (process.env.NEXT_PUBLIC_SKIP_FETCH_ERRORS) {
-    const company = {
-      name: "",
-    };
-    return company;
-  }
+type Contacts = {
+  id: string;
+  type: string;
+  content: string;
+};
 
-  const res = await getCompany();
-  if (!res.ok) {
-    throw new Error("Failed to fetch data");
-  }
+type Company = {
+  name: string;
+  document: string;
+  about: string;
+  contacts: Contacts[];
+  street: string;
+  number: string;
+  neighborhood: string;
+  city: string;
+  state: string;
+  zipCode: string;
+  latitude: string;
+  longitude: string;
+};
 
-  const data = await res.json();
-  const company = data.company;
+type HeaderProps = {
+  company: Company | null;
+};
 
-  const companyWithContacts = {
-    ...company,
-    contacts: JSON.parse(company.contacts),
-  };
-
-  return companyWithContacts;
-}
-
-export default async function Header() {
-  const company = await getData();
-
+export default function Header({ company }: HeaderProps) {
   return (
     <>
       <header className="bg-blue-900 text-blue-100 text-center p-8 flex flex-wrap justify-evenly items-center">

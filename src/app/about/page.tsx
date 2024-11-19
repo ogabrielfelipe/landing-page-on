@@ -5,11 +5,17 @@ import Header from "@/components/header";
 import { getCompany } from "@/http/web/get-company";
 import { useEffect, useState } from "react";
 
-interface company {
+type Contacts = {
+  id: string;
+  type: string;
+  content: string;
+};
+
+type Company = {
   name: string;
   document: string;
   about: string;
-  contacts: string;
+  contacts: Contacts[];
   street: string;
   number: string;
   neighborhood: string;
@@ -18,27 +24,39 @@ interface company {
   zipCode: string;
   latitude: string;
   longitude: string;
-}
+};
 
 export default function About() {
-  const [company, setCompany] = useState<company>();
+  const [company, setCompany] = useState<Company | null>(null);
+
+  const fetchCompany = async () => {
+    const res = await getCompany();
+    const companyData = await res.json();
+
+    let company: Company | null = null;
+
+    if (!companyData.company || typeof companyData.company !== "object") {
+      company = null;
+    }
+
+    company = {
+      ...companyData.company,
+      contacts:
+        typeof companyData.company.contacts === "string"
+          ? JSON.parse(companyData.company.contacts)
+          : companyData.company.contacts,
+    };
+
+    setCompany(company);
+  };
 
   useEffect(() => {
-    const fetchData = async () => {
-      try {
-        const res = await getCompany();
-        const { company } = await res.json();
-        setCompany(company);
-      } catch (error) {
-        console.error("Erro ao buscar dados no cliente:", error);
-      }
-    };
-    fetchData();
+    Promise.all([fetchCompany()]);
   }, []);
 
   return (
     <>
-      <Header />
+      <Header company={company} />
 
       <main>
         <section
@@ -59,7 +77,7 @@ export default function About() {
           ></div>
         </section>
       </main>
-      <Footer />
+      <Footer company={company} />
     </>
   );
 }

@@ -1,4 +1,3 @@
-import { getCompany } from "@/http/web/get-company";
 import {
   InstagramLogo,
   WhatsappLogo,
@@ -11,45 +10,26 @@ type Contacts = {
   content: string;
 };
 
-async function getData() {
-  if (process.env.NEXT_PUBLIC_SKIP_FETCH_ERRORS) {
-    return {
-      company: {
-        name: "",
-        document: "",
-        about: "",
-        contacts: "",
-        street: "",
-        number: "",
-        neighborhood: "",
-        city: "",
-        state: "",
-        zipCode: "",
-        latitude: "",
-        longitude: "",
-      },
-    };
-  }
+type Company = {
+  name: string;
+  document: string;
+  about: string;
+  contacts: Contacts[];
+  street: string;
+  number: string;
+  neighborhood: string;
+  city: string;
+  state: string;
+  zipCode: string;
+  latitude: string;
+  longitude: string;
+};
 
-  const res = await getCompany();
-  if (!res.ok) {
-    throw new Error("Failed to fetch data");
-  }
+type FooterProps = {
+  company: Company | null;
+};
 
-  const data = await res.json();
-  const company = data.company;
-
-  const companyWithContacts = {
-    ...company,
-    contacts: JSON.parse(company.contacts),
-  };
-
-  return companyWithContacts;
-}
-
-export default async function Footer() {
-  const company = await getData();
-
+const Footer = ({ company }: FooterProps) => {
   return (
     <footer className="bg-blue-900 text-blue-100">
       <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-12">
@@ -194,4 +174,6 @@ export default async function Footer() {
       </div>
     </footer>
   );
-}
+};
+
+export default Footer;

@@ -17,6 +17,7 @@ const Footer = dynamic(() => import("@/components/footer"), {
 
 import { Skeleton } from "@/components/ui/skeleton";
 import dynamic from "next/dynamic";
+import { getCompany } from "@/http/web/get-company";
 
 type Course = {
   id: string;
@@ -38,9 +39,31 @@ type Testimonial = {
   createdAt: string;
 };
 
+type Contacts = {
+  id: string;
+  type: string;
+  content: string;
+};
+
+type Company = {
+  name: string;
+  document: string;
+  about: string;
+  contacts: Contacts[];
+  street: string;
+  number: string;
+  neighborhood: string;
+  city: string;
+  state: string;
+  zipCode: string;
+  latitude: string;
+  longitude: string;
+};
+
 export default function Home() {
   const [courses, setCourses] = useState<Array<Course> | null>();
   const [testimonials, setTestimonials] = useState<Array<Testimonial> | null>();
+  const [company, setCompany] = useState<Company | null>(null);
   const [testimonialsPaginated, setTestimonialsPaginated] =
     useState<Array<Testimonial> | null>();
 
@@ -48,6 +71,27 @@ export default function Home() {
     useState<boolean>(false);
 
   const TOTAL_TESTIMONIALS = 5;
+
+  const fetchCompany = async () => {
+    const res = await getCompany();
+    const companyData = await res.json();
+
+    let company: Company | null = null;
+
+    if (!companyData.company || typeof companyData.company !== "object") {
+      company = null;
+    }
+
+    company = {
+      ...companyData.company,
+      contacts:
+        typeof companyData.company.contacts === "string"
+          ? JSON.parse(companyData.company.contacts)
+          : companyData.company.contacts,
+    };
+
+    setCompany(company);
+  };
 
   const fetchCourses = async () => {
     const coursesFn = await getCoursesStarred();
@@ -83,9 +127,11 @@ export default function Home() {
 
   useEffect(() => {
     const fetchData = () => {
-      Promise.all([fetchCourses(), fetchTestimonials()]).catch((error) => {
-        console.error("Error fetching data:", error);
-      });
+      Promise.all([fetchCourses(), fetchTestimonials(), fetchCompany()]).catch(
+        (error) => {
+          console.error("Error fetching data:", error);
+        }
+      );
     };
 
     fetchData();
@@ -134,7 +180,7 @@ export default function Home() {
 
   return (
     <>
-      <Header />
+      <Header company={company} />
 
       <main>
         <div className="m-2/3 max-m-screen m-auto overflow-hidden px-8 py-4">
@@ -277,7 +323,7 @@ export default function Home() {
         </div> */}
       </main>
 
-      <Footer />
+      <Footer company={company} />
     </>
   );
 }
