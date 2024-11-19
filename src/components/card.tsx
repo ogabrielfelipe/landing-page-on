@@ -1,8 +1,10 @@
 interface CardProps {
   contents: Array<Record<string, string | number>>;
+  isLink?: boolean;
+  url?: string;
 }
 
-export default function Card({ contents }: CardProps) {
+export default function Card({ contents, isLink, url }: CardProps) {
   return (
     <>
       {contents.map((content) => {
@@ -28,6 +30,17 @@ export default function Card({ contents }: CardProps) {
             <div
               dangerouslySetInnerHTML={{ __html: content.shortDescription }}
             ></div>
+
+            {isLink ? (
+              <a
+                href={`${url}/${content.id}`}
+                className="inline-block bg-[#ff9800] text-white p-2 m-1 text-center decoration-none rounded-md transition hover:bg-orange-500 hover:translate-y-1"
+              >
+                Detalhes do curso
+              </a>
+            ) : (
+              <></>
+            )}
           </div>
         );
       })}

@@ -1,4 +1,5 @@
 import Image from "next/image";
+import { Skeleton } from "./ui/skeleton";
 
 type Contacts = {
   id: string;
@@ -37,7 +38,11 @@ export default function Header({ company }: HeaderProps) {
           width={100}
           height={100}
         />
-        <h1 className="m-0 text-2xl">{company?.name}</h1>
+        {company?.name ? (
+          <h1 className="m-0 text-2xl">{company?.name}</h1>
+        ) : (
+          <Skeleton className="h-14 w-60" />
+        )}
       </header>
 
       <nav

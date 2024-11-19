@@ -97,7 +97,7 @@ export default function Courses() {
           </h2>
 
           {courses ? (
-            <Card contents={courses} />
+            <Card contents={courses} isLink={true} url="/courses" />
           ) : (
             <>
               <div className="bg-blue-50/50 bg-opacity-50 p-4 shadow-md m-3 rounded-lg flex flex-col gap-2 cursor-pointer hover:translate-y-[-0.25rem] hover:bg-opacity-70 transition-all duration-300">
