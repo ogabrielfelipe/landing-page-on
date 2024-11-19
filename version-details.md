@@ -10,3 +10,4 @@
 - Colocado o botão nos Card de curso para abrir a tela de Detalhes
 - Ajustado o título da página Sobre
 - Ajustado o título da página Cursos
+- Ajustado a responsividade para celulares

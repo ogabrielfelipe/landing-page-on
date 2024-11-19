@@ -3,6 +3,7 @@ import {
   WhatsappLogo,
   YoutubeLogo,
 } from "@phosphor-icons/react/dist/ssr";
+import { Skeleton } from "./ui/skeleton";
 
 type Contacts = {
   id: string;
@@ -50,16 +51,21 @@ const Footer = ({ company }: FooterProps) => {
           <div className="space-y-4">
             <h3 className="text-lg font-semibold">Contatos</h3>
             <p className="text-sm">
-              {" "}
-              {company?.number +
-                " " +
-                company?.street +
-                ", " +
-                company?.city +
-                ", " +
-                company?.state +
-                " " +
-                company?.zipCode}
+              {company?.street ? (
+                <>
+                  {company?.number +
+                    " " +
+                    company?.street +
+                    ", " +
+                    company?.city +
+                    ", " +
+                    company?.state +
+                    " " +
+                    company?.zipCode}
+                </>
+              ) : (
+                <Skeleton className="h-8 w-60" />
+              )}
             </p>
             <p className="text-sm">
               {company?.contacts?.find(

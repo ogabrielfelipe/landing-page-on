@@ -1,6 +1,5 @@
 "use client";
 
-import Loading from "@/app/admin/_components/loading";
 import Footer from "@/components/footer";
 import Header from "@/components/header";
 import { Skeleton } from "@/components/ui/skeleton";
@@ -51,7 +50,6 @@ export default function CourseDetails() {
 
   const [courses, setCourses] = useState<Course | null>();
   const [company, setCompany] = useState<Company | null>(null);
-  const [isLoading, setIsLoading] = useState<boolean>(true);
 
   const fetchCompany = async () => {
     const res = await getCompany();
@@ -76,12 +74,9 @@ export default function CourseDetails() {
 
   const fetchCourse = async (id: string) => {
     try {
-      setIsLoading(true);
       const res = await getDetailsCourse(id);
       const { courses } = await res.json();
       setCourses(courses);
-
-      setIsLoading(false);
     } catch (error) {
       console.error("Erro ao buscar dados no client:", error);
     }
@@ -109,13 +104,15 @@ export default function CourseDetails() {
 
           <div className="py-10 flex flex-row gap-5 flex-wrap">
             <div className=" flex flex-col gap-5">
-              <div className="h-96 w-96 ">
+              <div className="h-96 w-96 max-md:w-80">
                 {courses?.image ? (
                   <Image
-                    src={courses?.image}
+                    src={
+                      "https://live.staticflickr.com/65535/54120123332_bcb606e023_o.jpg"
+                    }
                     alt={courses?.name}
-                    width={450}
-                    height={450}
+                    width={400}
+                    height={400}
                   />
                 ) : (
                   <Skeleton className="h-full w-full" />
@@ -142,6 +139,24 @@ export default function CourseDetails() {
                 )}
               </div>
               <div className="h-5 w-96">
+                {courses?.level ? (
+                  <p className="h-auto w-full">
+                    <span className="font-bold">Nível: </span>{" "}
+                    {courses.level == "INITIAL" ? (
+                      <>Iniciante</>
+                    ) : courses.level == "INTERMEDIARY" ? (
+                      <>Intermediário</>
+                    ) : courses.level == "ADVANCED" ? (
+                      <>Avançado</>
+                    ) : (
+                      <></>
+                    )}
+                  </p>
+                ) : (
+                  <Skeleton className="h-full w-full" />
+                )}
+              </div>
+              <div className="h-5 w-96">
                 {courses?.category.name ? (
                   <p className="h-auto w-full">
                     <span className="font-bold">Categoria: </span>{" "}
@@ -153,7 +168,7 @@ export default function CourseDetails() {
               </div>
             </div>
 
-            <div className="h-auto w-[calc(100vw-30rem)]">
+            <div className="h-auto md:w-[calc(100vw-30rem)] max-md:mt-2 max-md:border-t-2 max-md:pt-4 max-md:border-[#ff9800]">
               {courses?.description ? (
                 <div
                   dangerouslySetInnerHTML={{
@@ -169,8 +184,6 @@ export default function CourseDetails() {
       </main>
 
       <Footer company={company} />
-
-      {isLoading ? <Loading /> : <></>}
     </>
   );
 }
