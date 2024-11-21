@@ -1,0 +1,2 @@
+-- AlterTable
+ALTER TABLE "company" ALTER COLUMN "contacts" SET DATA TYPE VARCHAR(1024);

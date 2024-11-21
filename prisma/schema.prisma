@@ -53,7 +53,7 @@ model Company{
   document String @unique @db.VarChar(14)
   about String @db.VarChar(2048)
 
-  contacts String? @db.VarChar(512)
+  contacts String? @db.VarChar(1024)
 
   street String
   number String

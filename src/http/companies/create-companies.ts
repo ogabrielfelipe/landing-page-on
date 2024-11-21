@@ -5,7 +5,7 @@ export const companiesSchema = z.object({
   name: z.string(),
   document: z.string().min(14),
   about: z.string().min(150).max(2048),
-  contacts: z.string().max(512),
+  contacts: z.string().max(1024),
   street: z.string().min(1),
   number: z.string().min(1),
   neighborhood: z.string().min(1),
