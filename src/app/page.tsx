@@ -7,16 +7,10 @@ import { getCoursesStarred } from "@/http/web/get-courses-starred";
 import { getTestimonials } from "@/http/web/get-testimonials";
 import { Button } from "@/components/ui/button";
 
-const Header = dynamic(() => import("@/components/header"), {
-  ssr: true,
-});
-
-const Footer = dynamic(() => import("@/components/footer"), {
-  ssr: true,
-});
+import Footer from "@/components/footer";
+import Header from "@/components/header";
 
 import { Skeleton } from "@/components/ui/skeleton";
-import dynamic from "next/dynamic";
 import { getCompany } from "@/http/web/get-company";
 
 type Course = {
