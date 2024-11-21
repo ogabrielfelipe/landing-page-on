@@ -102,51 +102,62 @@ const Footer = ({ company }: FooterProps) => {
               )}
             </p>
           </div>
-          <div className="space-y-4">
+          <div className="space-y-4 ">
             <h3 className="text-lg font-semibold">Redes Sociais</h3>
-            <div className="flex space-x-4">
-              <a
-                href="#"
-                className="text-blue-300 hover:text-white transition-colors"
-              >
+            <div className="">
+              <div className="flex flex-col align-middle gap-1">
                 {company?.contacts?.find(
                   (contact: Contacts) => contact.type === "instagram"
                 )?.content ? (
-                  <a
-                    href={`https://www.instagram.com/${
-                      company.contacts?.find(
-                        (contact: Contacts) => contact.type === "instagram"
-                      )?.content
-                    }`}
-                  >
-                    <InstagramLogo size={32} />
-                    <span className="sr-only">Instagram</span>
-                  </a>
+                  company.contacts
+                    ?.filter(
+                      (contact: Contacts) => contact.type === "instagram"
+                    )
+                    .map((contacts) => {
+                      return (
+                        <a
+                          key={contacts.id}
+                          href={`https://www.instagram.com/${contacts.content}`}
+                          className="hover:text-white transition-colors flex text-left items-center gap-1"
+                        >
+                          <InstagramLogo size={32} />
+                          <span className="text-sm min-w-32">
+                            {contacts.content}
+                          </span>
+                        </a>
+                      );
+                    })
                 ) : (
                   <></>
                 )}
-              </a>
-              <a
-                href="#"
-                className="text-blue-300 hover:text-white transition-colors"
-              >
+              </div>
+              <div className="flex flex-col align-middle gap-1">
                 {company?.contacts?.find(
                   (contact: Contacts) => contact.type === "whatsapp"
                 )?.content ? (
-                  <a
-                    href={`https://wa.me/+55${
-                      company.contacts?.find(
-                        (contact: Contacts) => contact.type === "whatsapp"
-                      )?.content
-                    }`}
-                  >
-                    <WhatsappLogo size={32} />
-                    <span className="sr-only">Whatsapp</span>
-                  </a>
+                  company.contacts
+                    ?.filter((contact: Contacts) => contact.type === "whatsapp")
+                    .map((contacts) => {
+                      return (
+                        <a
+                          key={contacts.id}
+                          href={`https://wa.me/+55${contacts.content}`}
+                          className="hover:text-white transition-colors flex text-left items-center gap-1"
+                        >
+                          <WhatsappLogo size={32} />
+                          <span className="text-sm min-w-32">
+                            {contacts.content.replace(
+                              /^(\d{2})(\d{5})(\d{4})$/,
+                              "($1) $2-$3"
+                            )}
+                          </span>
+                        </a>
+                      );
+                    })
                 ) : (
                   <></>
                 )}
-              </a>
+              </div>
 
               <a
                 href="#"
@@ -155,16 +166,22 @@ const Footer = ({ company }: FooterProps) => {
                 {company?.contacts?.find(
                   (contact: Contacts) => contact.type === "youtube"
                 )?.content ? (
-                  <a
-                    href={`https://www.youtube.com/${
-                      company.contacts?.find(
-                        (contact: Contacts) => contact.type === "youtube"
-                      )?.content
-                    }`}
-                  >
-                    <YoutubeLogo size={32} />
-                    <span className="sr-only">Whatsapp</span>
-                  </a>
+                  company.contacts
+                    ?.filter((contact: Contacts) => contact.type === "youtube")
+                    .map((contacts) => {
+                      return (
+                        <a
+                          key={contacts.id}
+                          href={`https://www.youtube.com/@${contacts.content}`}
+                          className="hover:text-white transition-colors flex text-left items-center gap-1"
+                        >
+                          <YoutubeLogo size={32} />
+                          <span className="text-sm min-w-32">
+                            {contacts.content.split(/(?=[A-Z])/)}
+                          </span>
+                        </a>
+                      );
+                    })
                 ) : (
                   <></>
                 )}
