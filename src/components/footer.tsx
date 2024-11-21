@@ -36,7 +36,7 @@ const Footer = ({ company }: FooterProps) => {
       <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-12">
         <div className="grid grid-cols-1 md:grid-cols-3 gap-8 justify-items-center">
           <div className="space-y-4">
-            <h3 className="text-lg font-semibold">Outros links</h3>
+            <h3 className="text-lg font-semibold">Demais links</h3>
             <ul className="space-y-2">
               <li>
                 <a
@@ -51,17 +51,19 @@ const Footer = ({ company }: FooterProps) => {
           <div className="space-y-4">
             <h3 className="text-lg font-semibold">Contatos</h3>
             <p className="text-sm">
+              <span className="text-sm font-bold">Endereço: </span>
               {company?.street ? (
                 <>
-                  {company?.number +
-                    " " +
-                    company?.street +
+                  {company?.street +
+                    ", Número: " +
+                    company?.number +
                     ", " +
                     company?.city +
-                    ", " +
+                    " - " +
                     company?.state +
-                    " " +
-                    company?.zipCode}
+                    ", CEP: " +
+                    company?.zipCode +
+                    "."}
                 </>
               ) : (
                 <Skeleton className="h-8 w-60" />
@@ -70,24 +72,34 @@ const Footer = ({ company }: FooterProps) => {
             <p className="text-sm">
               {company?.contacts?.find(
                 (contact: Contacts) => contact.type === "mail"
-              )?.content
-                ? `E-mail: ${
+              )?.content ? (
+                <>
+                  <span className="text-sm font-bold">E-mail: </span>
+                  {
                     company.contacts?.find(
                       (contact: Contacts) => contact.type === "mail"
                     )?.content
-                  }`
-                : "E-mail não cadastrado"}
+                  }
+                </>
+              ) : (
+                "E-mail não cadastrado"
+              )}
             </p>
             <p className="text-sm">
               {company?.contacts?.find(
                 (contact: Contacts) => contact.type === "phone"
-              )?.content
-                ? `Telefone: ${
+              )?.content ? (
+                <>
+                  <span className="text-sm font-bold">Telefone: </span>
+                  {
                     company.contacts?.find(
                       (contact: Contacts) => contact.type === "phone"
                     )?.content
-                  }`
-                : "Telefone não cadastrado"}
+                  }
+                </>
+              ) : (
+                "Telefone não cadastrado"
+              )}
             </p>
           </div>
           <div className="space-y-4">
@@ -170,7 +182,7 @@ const Footer = ({ company }: FooterProps) => {
             <a
               href="https://gafvi.com.br/"
               target="_blank"
-              className="text-blue-100"
+              className="text-blue-100 hover:underline"
             >
               Gabriel Felipe
             </a>
