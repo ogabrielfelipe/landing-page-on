@@ -1,9 +1,29 @@
 import { prisma } from "@/lib/prisma";
 import { NextResponse } from "next/server";
+import { z } from "zod";
 
-export async function GET() {
+const getTestimonialsSchema = z.object({
+  page: z.number({ coerce: true }).optional().default(1),
+  perPage: z.number({ coerce: true }).optional().default(1),
+});
+
+type GetTestimonialsRequest = z.infer<typeof getTestimonialsSchema>;
+
+export async function GET(request: Request) {
+  const { searchParams } = new URL(request.url);
+  const query = getTestimonialsSchema.safeParse(
+    Object.fromEntries(searchParams)
+  );
+
+  if (!query.success) {
+    return NextResponse.json(
+      { message: "Invalid query parameters" },
+      { status: 400 }
+    );
+  }
+
   try {
-    const testimonials = await getTestimonials();
+    const testimonials = await getTestimonials(query.data);
 
     return NextResponse.json({ testimonials }, { status: 200 });
   } catch (e) {
@@ -12,7 +32,7 @@ export async function GET() {
   }
 }
 
-async function getTestimonials() {
+async function getTestimonials({ page, perPage }: GetTestimonialsRequest) {
   const testimonials = await prisma.testimonial.findMany({
     where: {
       course: {
@@ -35,6 +55,8 @@ async function getTestimonials() {
       },
       createdAt: true,
     },
+    take: perPage,
+    skip: (page - 1) * perPage,
   });
 
   return testimonials;

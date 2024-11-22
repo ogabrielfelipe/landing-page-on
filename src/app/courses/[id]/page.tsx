@@ -3,8 +3,7 @@
 import Footer from "@/components/footer";
 import Header from "@/components/header";
 import { Skeleton } from "@/components/ui/skeleton";
-import { getCompany } from "@/http/web/get-company";
-import { getDetailsCourse } from "@/http/web/get-courses-details";
+import { URLBase } from "@/http/config";
 import Image from "next/image";
 import { useParams } from "next/navigation";
 import { useEffect, useState } from "react";
@@ -52,7 +51,10 @@ export default function CourseDetails() {
   const [company, setCompany] = useState<Company | null>(null);
 
   const fetchCompany = async () => {
-    const res = await getCompany();
+    const res = await fetch(`${URLBase}/api/web/company?page=1&perPage=1`, {
+      method: "GET",
+      cache: "no-store",
+    });
     const companyData = await res.json();
 
     let company: Company | null = null;
@@ -74,7 +76,10 @@ export default function CourseDetails() {
 
   const fetchCourse = async (id: string) => {
     try {
-      const res = await getDetailsCourse(id);
+      const res = await fetch(`${URLBase}/api/web/courses/${id}/details`, {
+        method: "GET",
+        cache: "no-store",
+      });
       const { courses } = await res.json();
       setCourses(courses);
     } catch (error) {

@@ -1,9 +1,28 @@
 import { prisma } from "@/lib/prisma";
 import { NextResponse } from "next/server";
+import { z } from "zod";
 
-export async function GET() {
+const getCoursesSchema = z.object({
+  page: z.number({ coerce: true }).optional().default(1),
+  perPage: z.number({ coerce: true }).optional().default(100),
+  starred: z.boolean({ coerce: true }).optional(),
+});
+
+type GetCoursesRequest = z.infer<typeof getCoursesSchema>;
+
+export async function GET(request: Request) {
+  const { searchParams } = new URL(request.url);
+  const query = getCoursesSchema.safeParse(Object.fromEntries(searchParams));
+
+  if (!query.success) {
+    return NextResponse.json(
+      { message: "Invalid query parameters" },
+      { status: 400 }
+    );
+  }
+
   try {
-    const courses = await getCourses();
+    const courses = await getCourses(query.data);
 
     return NextResponse.json({ courses }, { status: 200 });
   } catch (e) {
@@ -12,9 +31,11 @@ export async function GET() {
   }
 }
 
-async function getCourses() {
+async function getCourses(props: GetCoursesRequest) {
   const courses = await prisma.course.findMany({
     where: {
+      ...(props?.starred && { starred: props.starred }),
+
       category: {
         isActive: true,
       },

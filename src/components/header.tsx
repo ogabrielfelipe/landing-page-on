@@ -32,11 +32,11 @@ export default function Header({ company }: HeaderProps) {
       <header className="bg-blue-900 text-blue-100 text-center p-8 flex flex-wrap justify-evenly items-center">
         <Image
           src={
-            "https://live.staticflickr.com/65535/54120123332_5e2356c26b_c.jpg"
+            "https://live.staticflickr.com/65535/54157911404_9f6fb3410a_o.png"
           }
           alt={`logo-${company?.name}`}
-          width={100}
-          height={100}
+          width={150}
+          height={150}
         />
         {company?.name ? (
           <h1 className="m-0 text-2xl">{company?.name}</h1>
