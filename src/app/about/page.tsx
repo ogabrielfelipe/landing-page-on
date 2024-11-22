@@ -2,7 +2,7 @@
 
 import Footer from "@/components/footer";
 import Header from "@/components/header";
-import { getCompany } from "@/http/web/get-company";
+import { URLBase } from "@/http/config";
 import { useEffect, useState } from "react";
 
 type Contacts = {
@@ -30,7 +30,10 @@ export default function About() {
   const [company, setCompany] = useState<Company | null>(null);
 
   const fetchCompany = async () => {
-    const res = await getCompany();
+    const res = await fetch(`${URLBase}/api/web/company?page=1&perPage=1`, {
+      method: "GET",
+      cache: "no-store",
+    });
     const companyData = await res.json();
 
     let company: Company | null = null;

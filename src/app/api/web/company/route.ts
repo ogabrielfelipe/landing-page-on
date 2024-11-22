@@ -1,9 +1,27 @@
 import { prisma } from "@/lib/prisma";
 import { NextResponse } from "next/server";
+import { z } from "zod";
 
-export async function GET() {
+const getCompanySchema = z.object({
+  page: z.number({ coerce: true }).optional().default(1),
+  perPage: z.number({ coerce: true }).optional().default(1),
+});
+
+type GetCompanyRequest = z.infer<typeof getCompanySchema>;
+
+export async function GET(request: Request) {
+  const { searchParams } = new URL(request.url);
+  const query = getCompanySchema.safeParse(Object.fromEntries(searchParams));
+
+  if (!query.success) {
+    return NextResponse.json(
+      { message: "Invalid query parameters" },
+      { status: 400 }
+    );
+  }
+
   try {
-    const company = await getCompany();
+    const company = await getCompany(query.data);
 
     return NextResponse.json({ company }, { status: 200 });
   } catch (e) {
@@ -12,7 +30,7 @@ export async function GET() {
   }
 }
 
-async function getCompany() {
+async function getCompany({ page, perPage }: GetCompanyRequest) {
   const company = await prisma.company.findFirst({
     where: {},
     select: {
@@ -29,6 +47,8 @@ async function getCompany() {
       street: true,
       zipCode: true,
     },
+    take: perPage,
+    skip: (page - 1) * perPage,
   });
 
   return company;

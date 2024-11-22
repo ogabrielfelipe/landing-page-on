@@ -159,10 +159,7 @@ const Footer = ({ company }: FooterProps) => {
                 )}
               </div>
 
-              <a
-                href="#"
-                className="text-blue-300 hover:text-white transition-colors"
-              >
+              <div className="flex flex-col align-middle gap-1">
                 {company?.contacts?.find(
                   (contact: Contacts) => contact.type === "youtube"
                 )?.content ? (
@@ -185,7 +182,7 @@ const Footer = ({ company }: FooterProps) => {
                 ) : (
                   <></>
                 )}
-              </a>
+              </div>
             </div>
           </div>
         </div>

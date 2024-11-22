@@ -1,17 +1,15 @@
 "use client";
-
+export const dynamic = "force-dynamic";
 import { useEffect, useState } from "react";
 
 import Card from "@/components/card";
-import { getCoursesStarred } from "@/http/web/get-courses-starred";
-import { getTestimonials } from "@/http/web/get-testimonials";
 import { Button } from "@/components/ui/button";
 
 import Footer from "@/components/footer";
 import Header from "@/components/header";
 
 import { Skeleton } from "@/components/ui/skeleton";
-import { getCompany } from "@/http/web/get-company";
+import { URLBase } from "@/http/config";
 
 type Course = {
   id: string;
@@ -67,7 +65,10 @@ export default function Home() {
   const TOTAL_TESTIMONIALS = 5;
 
   const fetchCompany = async () => {
-    const res = await getCompany();
+    const res = await fetch(`${URLBase}/api/web/company?page=1&perPage=1`, {
+      method: "GET",
+      cache: "no-store",
+    });
     const companyData = await res.json();
 
     let company: Company | null = null;
@@ -88,7 +89,10 @@ export default function Home() {
   };
 
   const fetchCourses = async () => {
-    const coursesFn = await getCoursesStarred();
+    const coursesFn = await fetch(`${URLBase}/api/web/courses?starred=true`, {
+      method: "GET",
+      cache: "no-store",
+    });
 
     const data = await coursesFn.json();
 
@@ -101,7 +105,13 @@ export default function Home() {
   };
 
   const fetchTestimonials = async () => {
-    const testimonialsFn = await getTestimonials();
+    const testimonialsFn = await fetch(
+      `${URLBase}/api/web/testimonials?page=1&perPage=100`,
+      {
+        method: "GET",
+        cache: "no-store",
+      }
+    );
 
     const data = await testimonialsFn.json();
 
@@ -120,12 +130,16 @@ export default function Home() {
   };
 
   useEffect(() => {
-    const fetchData = () => {
-      Promise.all([fetchCourses(), fetchTestimonials(), fetchCompany()]).catch(
-        (error) => {
-          console.error("Error fetching data:", error);
-        }
-      );
+    const fetchData = async () => {
+      try {
+        await Promise.all([
+          fetchCourses(),
+          fetchTestimonials(),
+          fetchCompany(),
+        ]);
+      } catch (err) {
+        console.log(err);
+      }
     };
 
     fetchData();

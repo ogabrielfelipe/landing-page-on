@@ -5,9 +5,8 @@ import Footer from "@/components/footer";
 import { useEffect } from "react";
 import Header from "@/components/header";
 import Card from "@/components/card";
-import { getCourses } from "@/http/web/get-courses";
-import { getCompany } from "@/http/web/get-company";
 import { Skeleton } from "@/components/ui/skeleton";
+import { URLBase } from "@/http/config";
 
 type Course = {
   id: string;
@@ -46,7 +45,10 @@ export default function Courses() {
 
   const fetchCourses = async () => {
     try {
-      const res = await getCourses();
+      const res = await fetch(`${URLBase}/api/web/courses`, {
+        method: "GET",
+        cache: "no-store",
+      });
       const { courses } = await res.json();
       setCourses(courses);
     } catch (error) {
@@ -55,7 +57,10 @@ export default function Courses() {
   };
 
   const fetchCompany = async () => {
-    const res = await getCompany();
+    const res = await fetch(`${URLBase}/api/web/company?page=1&perPage=1`, {
+      method: "GET",
+      cache: "no-store",
+    });
     const companyData = await res.json();
 
     let company: Company | null = null;
