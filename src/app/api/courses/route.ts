@@ -58,7 +58,10 @@ export async function GET(request: Request) {
 
 async function createCourses(data: CreateCoursesRequest) {
   const course = await prisma.course.create({
-    data,
+    data: {
+      ...data,
+      image: "https://live.staticflickr.com/65535/54120123332_bcb606e023_o.jpg",
+    },
   });
   return course;
 }
